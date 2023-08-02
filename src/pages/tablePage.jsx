@@ -5,7 +5,12 @@ import Feed from "../components/Feed";
 import { useEffect, useState } from "react";
 import EditItem from "../components/EditItem";
 import Cart from "../components/Cart";
-import { PAYMENT_METHODS, TABLE_STATUS, createTable } from "../utils";
+import {
+  PAYMENT_METHODS,
+  TABLE_STATUS,
+  createTable,
+  generateID,
+} from "../utils";
 import { useDispatch, useSelector } from "react-redux";
 import { tablesActions } from "../state";
 import { setTable } from "../firebase";
@@ -79,20 +84,38 @@ export default function TablePage() {
       type: tablesActions.addItem,
       payload: {
         tableNumber: Number(tableNumber),
-        item,
+        item: { ...item, id: generateID() },
       },
     });
 
   const printReceipt = () => {
-    setTable(tableNumber.toString(), {
+    setTable(tableNumber, {
       ...table,
       status: TABLE_STATUS.closing,
     });
   };
 
+  const closeTable = () => {
+    setTable(
+      tableNumber,
+      createTable({
+        tableNumber: Number(tableNumber),
+        status: TABLE_STATUS.close,
+      })
+    );
+  };
+
   const [selectedItem, setSelectedItem] = useState(null);
 
-  const editItemFromCart = (editedItem) => [];
+  const editItemFromCart = (editedItem) => {
+    const editedTable = {
+      ...table,
+      cartItems: table.cartItems.map((item) =>
+        item.id === editedItem.id ? editedItem : item
+      ),
+    };
+    setTable(tableNumber, editedTable);
+  };
 
   const selectItem = (item, isSelected) =>
     setSelectedItem(isSelected ? null : item);
@@ -123,7 +146,10 @@ export default function TablePage() {
         <div className="md:col-span-2 flex flex-col gap-2">
           {/* table actions */}
           <div className="flex gap-2">
-            <div className="btn rounded-none grow w-auto btn-outline btn-sm btn-primary">
+            <div
+              className="btn rounded-none grow w-auto btn-outline btn-sm btn-primary"
+              onClick={closeTable}
+            >
               Pay
             </div>
 
