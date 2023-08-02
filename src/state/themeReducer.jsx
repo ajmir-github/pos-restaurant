@@ -10,8 +10,7 @@ function setLocalTheme(theme) {
   return theme;
 }
 
-export const themesList = ["light", "dark"];
-export const initialTheme = getLocalTheme(themesList[0]);
+export const initialTheme = getLocalTheme("light");
 
 export const themeActions = {
   turnLightTheme: "TURN_LIGHT_THEME",
@@ -22,10 +21,10 @@ export const themeActions = {
 export function themeReducer(state = initialTheme, { type, payload }) {
   switch (type) {
     case themeActions.turnLightTheme:
-      return setLocalTheme(themesList[0]);
+      return setLocalTheme("light");
 
     case themeActions.turnDarkTheme:
-      return setLocalTheme(themesList[1]);
+      return setLocalTheme("dark");
 
     case themeActions.chooseTheme:
       return setLocalTheme(payload);

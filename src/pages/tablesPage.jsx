@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import TopPanel from "../components/TopPanel";
 import {
   PAYMENT_METHODS,
@@ -6,95 +6,34 @@ import {
   classes,
   conditionalClasses,
 } from "../utils";
+import Layout from "../components/Layout";
+import { useSelector } from "react-redux";
+import { useMemo } from "react";
 
 export default function TablesPage() {
-  const tables = [
-    {
-      status: TABLE_STATUS.open,
-      customers: 3,
-      tableNumber: 1,
-      discountAmount: null,
-      paymentMethod: PAYMENT_METHODS.cash,
-      createdTime: null,
-      cartItems: [],
-      totalPrice: 0,
-      discount: {
-        has: false,
-        percentage: 0,
-      },
-    },
-    {
-      status: TABLE_STATUS.close,
-      customers: 0,
-      tableNumber: 2,
-      discountAmount: null,
-      paymentMethod: PAYMENT_METHODS.cash,
-      createdTime: null,
-      cartItems: [],
-      totalPrice: 0,
-      discount: {
-        has: false,
-        percentage: 0,
-      },
-    },
-    {
-      status: TABLE_STATUS.open,
-      customers: 4,
-      tableNumber: 3,
-      discountAmount: null,
-      paymentMethod: PAYMENT_METHODS.cash,
-      createdTime: null,
-      cartItems: [],
-      totalPrice: 0,
-      starter: true,
-      discount: {
-        has: false,
-        percentage: 0,
-      },
-    },
-    {
-      status: TABLE_STATUS.closing,
-      customers: 4,
-      tableNumber: 4,
-      discountAmount: null,
-      paymentMethod: PAYMENT_METHODS.cash,
-      createdTime: null,
-      cartItems: [],
-      totalPrice: 0,
-      discount: {
-        has: false,
-        percentage: 0,
-      },
-    },
-    {
-      status: TABLE_STATUS.break,
-      customers: 2,
-      tableNumber: 5,
-      discountAmount: null,
-      paymentMethod: PAYMENT_METHODS.cash,
-      createdTime: null,
-      cartItems: [],
-      totalPrice: 0,
-      starter: true,
-
-      discount: {
-        has: false,
-        percentage: 0,
-      },
-    },
-  ];
+  const tables = useSelector((s) => s.tables);
+  const stats = useMemo(
+    () => ({
+      customers: tables.reduce((art, table) => art + table.customers, 0),
+      tables: tables.reduce(
+        (art, table) => (table.status !== TABLE_STATUS.close ? art + 1 : art),
+        0
+      ),
+    }),
+    [tables]
+  );
   return (
-    <div className="flex flex-col">
+    <Layout>
       <TopPanel backHref={"/"} userName={"Ajmir Raziqi"}>
-        <span>Tables:2</span>
-        <span>Customers:4</span>
+        <span>Tables:{stats.tables}</span>
+        <span>Customers:{stats.customers}</span>
       </TopPanel>
       <div className="flex gap-1 sm:gap-2 flex-wrap justify-center">
         {tables.map((table) => (
           <Link
             to={`/table/${table.tableNumber}`}
             className={classes(
-              "btn h-20 sm:h-24  w-20 sm:w-24 text-2xl sm:text-4xl relative",
+              "btn h-20 sm:h-24 w-20 sm:w-24 text-2xl sm:text-4xl relative rounded-none",
               conditionalClasses(table.status, {
                 [TABLE_STATUS.close]: "btn-ghost",
                 [TABLE_STATUS.open]: "btn-primary",
@@ -113,6 +52,6 @@ export default function TablesPage() {
           </Link>
         ))}
       </div>
-    </div>
+    </Layout>
   );
 }

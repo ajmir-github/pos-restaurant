@@ -1,24 +1,10 @@
-import { PAYMENT_METHODS, TABLE_STATUS } from "@/utils";
+import { PAYMENT_METHODS, TABLE_STATUS } from "../utils";
 
-export const initialTables = [
-  {
-    status: TABLE_STATUS.open,
-    customers: 3,
-    tableNumber: 1,
-    discountAmount: null,
-    paymentMethod: PAYMENT_METHODS.cash,
-    createdTime: null,
-    cartItems: [],
-    totalPrice: 0,
-    discount: {
-      has: false,
-      percentage: 0,
-    },
-  },
-  {
+function getNewTable(tableNumber) {
+  return {
     status: TABLE_STATUS.close,
     customers: 0,
-    tableNumber: 2,
+    tableNumber,
     discountAmount: null,
     paymentMethod: PAYMENT_METHODS.cash,
     createdTime: null,
@@ -28,12 +14,17 @@ export const initialTables = [
       has: false,
       percentage: 0,
     },
-  },
-];
+  };
+}
+
+export const initialTables = new Array(40)
+  .fill(null)
+  .map((a, index) => getNewTable(index + 1));
 
 export const tablesActions = {
   openTable: "OPEN_TABLE",
   addItem: "ADD_ITEM",
+  updateTable: "UPDATE_TABLE",
 };
 
 export function tablesReducer(state = initialTables, { type, payload }) {
@@ -57,6 +48,23 @@ export function tablesReducer(state = initialTables, { type, payload }) {
               percentage: 0,
             },
           };
+        return table;
+      });
+    case tablesActions.addItem:
+      return state.map((table) => {
+        if (table.tableNumber === payload.tableNumber)
+          return {
+            ...table,
+            cartItems: [...table.cartItems, payload.item],
+          };
+        return table;
+      });
+
+    case tablesActions.updateTable:
+      return state.map((table) => {
+        if (table.tableNumber === payload.tableNumber) {
+          return payload;
+        }
         return table;
       });
 
