@@ -2,7 +2,7 @@ import { Link, useParams } from "react-router-dom";
 import Layout from "../components/Layout";
 import TopPanel from "../components/TopPanel";
 import Feed from "../components/Feed";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import EditItem from "../components/EditItem";
 import Cart from "../components/Cart";
 import { PAYMENT_METHODS, TABLE_STATUS, createTable } from "../utils";
@@ -73,6 +73,7 @@ export default function TablePage() {
   const table = useSelector((s) =>
     s.tables.find((t) => t.tableNumber === Number(tableNumber))
   );
+
   const addItemToCart = (item) =>
     dispatch({
       type: tablesActions.addItem,
@@ -81,6 +82,13 @@ export default function TablePage() {
         item,
       },
     });
+
+  const printReceipt = () => {
+    setTable(tableNumber.toString(), {
+      ...table,
+      status: TABLE_STATUS.closing,
+    });
+  };
 
   const [selectedItem, setSelectedItem] = useState(null);
 
@@ -96,7 +104,10 @@ export default function TablePage() {
 
   const cancelEdit = () => setSelectedItem(null);
 
-  const sendCart = () => setTable(tableNumber, table);
+  const sendCart = () => {
+    const starter = table.cartItems.some((item) => item.starter);
+    setTable(tableNumber, { ...table, starter });
+  };
 
   const main =
     table.status === TABLE_STATUS.close ? (
@@ -111,7 +122,10 @@ export default function TablePage() {
               Pay
             </div>
 
-            <div className="btn rounded-none grow w-auto btn-outline btn-sm btn-success">
+            <div
+              className="btn rounded-none grow w-auto btn-outline btn-sm btn-success"
+              onClick={printReceipt}
+            >
               Reciept
             </div>
             <div className="btn rounded-none grow w-auto btn-outline btn-sm btn-error">
