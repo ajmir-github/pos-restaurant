@@ -5,7 +5,7 @@ import Feed from "../components/Feed";
 import { useState } from "react";
 import EditItem from "../components/EditItem";
 import Cart from "../components/Cart";
-import { PAYMENT_METHODS, TABLE_STATUS } from "../utils";
+import { PAYMENT_METHODS, TABLE_STATUS, createTable } from "../utils";
 import { useDispatch, useSelector } from "react-redux";
 import { tablesActions } from "../state";
 import { setTable } from "../firebase";
@@ -17,14 +17,18 @@ function OpenTable({ tableNumber }) {
     const form = new FormData(e.target);
     const customerName = form.get("customerName");
     const customers = Number(form.get("customers"));
+    const newTable = createTable({
+      customerName,
+      customers,
+      tableNumber,
+      status: TABLE_STATUS.open,
+    });
     dispatch({
       type: tablesActions.openTable,
-      payload: {
-        customerName,
-        customers,
-        tableNumber,
-      },
+      payload: newTable,
     });
+
+    setTable(tableNumber.toString(), newTable);
   };
   return (
     <form

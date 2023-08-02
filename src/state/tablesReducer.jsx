@@ -1,25 +1,6 @@
-import { PAYMENT_METHODS, TABLE_STATUS } from "../utils";
+import { PAYMENT_METHODS, TABLE_STATUS, getListOfTables } from "../utils";
 
-function getNewTable(tableNumber) {
-  return {
-    status: TABLE_STATUS.close,
-    customers: 0,
-    tableNumber,
-    discountAmount: null,
-    paymentMethod: PAYMENT_METHODS.cash,
-    createdTime: null,
-    cartItems: [],
-    totalPrice: 0,
-    discount: {
-      has: false,
-      percentage: 0,
-    },
-  };
-}
-
-export const initialTables = new Array(40)
-  .fill(null)
-  .map((a, index) => getNewTable(index + 1));
+export const initialTables = getListOfTables(40);
 
 export const tablesActions = {
   openTable: "OPEN_TABLE",

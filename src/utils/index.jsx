@@ -80,6 +80,31 @@ export function parseAdditions(additions) {
   });
 }
 
+export function createTable(entries) {
+  return {
+    // tableNumber,
+    // customerName
+    status: TABLE_STATUS.close,
+    customers: 0,
+    discountAmount: null,
+    paymentMethod: PAYMENT_METHODS.cash,
+    createdTime: null,
+    cartItems: [],
+    totalPrice: 0,
+    discount: {
+      has: false,
+      percentage: 0,
+    },
+    ...entries,
+  };
+}
+
+export function getListOfTables(length = 20) {
+  return new Array(length)
+    .fill(null)
+    .map((a, index) => createTable({ tableNumber: index + 1 }));
+}
+
 // -------------- ENUMS
 export const PAYMENT_METHODS = {
   card: "Card",
