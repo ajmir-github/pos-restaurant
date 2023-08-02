@@ -25,3 +25,6 @@ dist-ssr
 
 
 /temp
+
+# Local Netlify folder
+.netlify
