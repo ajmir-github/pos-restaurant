@@ -105,8 +105,13 @@ export default function TablePage() {
   const cancelEdit = () => setSelectedItem(null);
 
   const sendCart = () => {
-    const starter = table.cartItems.some((item) => item.starter);
-    setTable(tableNumber, { ...table, starter });
+    const editedTable = {
+      ...table,
+      starter: table.cartItems.some((item) => item.starter),
+    };
+    if (table.status === TABLE_STATUS.closing)
+      editedTable.status = TABLE_STATUS.open;
+    setTable(tableNumber, editedTable);
   };
 
   const main =
