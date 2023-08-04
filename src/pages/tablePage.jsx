@@ -63,24 +63,6 @@ function OpenTable({ openTable }) {
   );
 }
 
-class CachedArray {
-  constructor(key) {
-    this.key = key;
-    if (localStorage.getItem(this.key) === null) this.set([]);
-  }
-  get() {
-    return JSON.parse(localStorage.getItem(this.key));
-  }
-  set(value) {
-    const newData = JSON.stringify(value);
-    localStorage.setItem(this.key, newData);
-  }
-  clear() {
-    localStorage.removeItem(this.key);
-    this.set([]);
-  }
-}
-
 function useTable() {
   const { tableNumber } = useParams();
   const navigate = useNavigate();
@@ -88,17 +70,11 @@ function useTable() {
     state.tables.find((table) => table.tableNumber === Number(tableNumber))
   );
 
-  const cachedItems = new CachedArray("CACHED_ITEMS_OF_TABLE: " + tableNumber);
-
-  const [cartItems, setCartItems] = useState([]);
+  const [cartItems, setCartItems] = useState(table.cartItems);
 
   useEffect(() => {
-    setCartItems([...table.cartItems, ...cachedItems.get()]);
-  }, [table, tableNumber]);
-
-  useEffect(() => {
-    cachedItems.set(cartItems.filter((item) => !item.sent));
-  }, [cartItems]);
+    setCartItems(table.cartItems);
+  }, [table]);
 
   // table functions
   const openTable = (entries) =>
@@ -161,14 +137,11 @@ function useTable() {
     );
 
   const sendCart = () => {
-    cachedItems.clear();
-    const sentItems = cartItems
-      .filter((item) => !item.removed)
-      .map((item) => (item.sent ? item : { ...item, sent: true }));
-    setCartItems(sentItems);
     setTable({
       ...table,
-      cartItems: sentItems,
+      cartItems: cartItems
+        .filter((item) => !item.removed)
+        .map((item) => (item.sent ? item : { ...item, sent: true })),
     });
   };
 

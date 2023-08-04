@@ -294,3 +294,21 @@ export const ITEM_GROUPS = [
     filterFunc: (item) => item.type === ITEM_TYPE.drink,
   },
 ];
+
+export class CachedArray {
+  constructor(key) {
+    this.key = key;
+    if (localStorage.getItem(this.key) === null) this.set([]);
+  }
+  get() {
+    return JSON.parse(localStorage.getItem(this.key));
+  }
+  set(value) {
+    const newData = JSON.stringify(value);
+    localStorage.setItem(this.key, newData);
+  }
+  clear() {
+    localStorage.removeItem(this.key);
+    this.set([]);
+  }
+}
