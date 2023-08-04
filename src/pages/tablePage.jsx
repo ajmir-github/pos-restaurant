@@ -116,7 +116,7 @@ function useTable() {
       cartItems.map((item) =>
         item._id === editedItem._id
           ? {
-              editedItem,
+              ...editedItem,
               edited: true,
               sent: false,
             }

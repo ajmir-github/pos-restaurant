@@ -27,17 +27,14 @@ export default function EditItem({
   };
 
   const onSave = () => {
-    editItemFromCart(
-      deepClone({
-        ...item,
-        qty,
-        price,
-        starter,
-        message,
-        additions,
-        edited: true,
-      })
-    );
+    editItemFromCart({
+      ...item,
+      qty,
+      price,
+      starter,
+      message,
+      additions,
+    });
     cancelEdit();
   };
 
