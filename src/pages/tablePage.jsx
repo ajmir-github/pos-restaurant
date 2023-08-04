@@ -64,9 +64,8 @@ function OpenTable({ openTable }) {
 }
 
 class CachedArray {
-  constructor(key, tableNumber) {
-    this.key = key + tableNumber;
-    console.log(this.key);
+  constructor(key) {
+    this.key = key;
     if (localStorage.getItem(this.key) === null) this.set([]);
   }
   get() {
@@ -89,7 +88,7 @@ function useTable() {
     state.tables.find((table) => table.tableNumber === Number(tableNumber))
   );
 
-  const cachedItems = new CachedArray("CACHED_ITEMS", tableNumber);
+  const cachedItems = new CachedArray("CACHED_ITEMS_OF_TABLE: " + tableNumber);
 
   const [cartItems, setCartItems] = useState([]);
 
