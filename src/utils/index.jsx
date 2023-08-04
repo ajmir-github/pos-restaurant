@@ -22,71 +22,13 @@ export function conditionalComponents(condition, Components) {
   return Components[condition] || Components.default;
 }
 
-const ADDITION_ENUMS = {
-  and: ":&:",
-  or: ":|:",
-  true: "1",
-  false: "0",
-};
-export function stringifyAdditions(additions) {
-  return (additions || []).map(
-    ({ name, type, defaultValue, value, options }) => {
-      if (type === ADDITION_TYPE.select)
-        return `${name}${ADDITION_ENUMS.and}${type}${
-          ADDITION_ENUMS.and
-        }${defaultValue}${ADDITION_ENUMS.and}${value || defaultValue}${
-          ADDITION_ENUMS.and
-        }${options.join(ADDITION_ENUMS.or)}`;
-
-      if (type === ADDITION_TYPE.checkbox)
-        return `${name}${ADDITION_ENUMS.and}${type}${ADDITION_ENUMS.and}${
-          defaultValue ? ADDITION_ENUMS.true : ADDITION_ENUMS.false
-        }${ADDITION_ENUMS.and}${
-          value || defaultValue ? ADDITION_ENUMS.true : ADDITION_ENUMS.false
-        }`;
-      return `${name}:${type}:${defaultValue}:${value || defaultValue}`;
-    }
-  );
-}
-
-export function parseAdditions(additions) {
-  return (additions || []).map((addition) => {
-    const [name, type, defaultValue, value, options] = addition.split(
-      ADDITION_ENUMS.and
-    );
-    if (type === ADDITION_TYPE.select)
-      return {
-        name,
-        type,
-        defaultValue,
-        value,
-        options: options.split(ADDITION_ENUMS.or),
-      };
-
-    if (type === ADDITION_TYPE.checkbox)
-      return {
-        name,
-        type,
-        defaultValue: defaultValue === ADDITION_ENUMS.true,
-        value: value === ADDITION_ENUMS.true,
-      };
-
-    return {
-      name,
-      type,
-      defaultValue,
-      value,
-    };
-  });
-}
-
 export function createTable(entries) {
   return {
     // tableNumber,
     // customerName
+    _id: generateID(),
     status: TABLE_STATUS.close,
     customers: 0,
-    discountAmount: null,
     paymentMethod: PAYMENT_METHODS.cash,
     createdTime: null,
     cartItems: [],
@@ -99,7 +41,7 @@ export function createTable(entries) {
   };
 }
 
-export function getListOfTables(length = 20) {
+export function getListOfTables(length = 20, withId = false) {
   return new Array(length)
     .fill(null)
     .map((a, index) => createTable({ tableNumber: index + 1 }));
@@ -131,6 +73,13 @@ export const ADDITION_TYPE = {
   numberInput: "numberInput",
   textInput: "textInput",
 };
+
+export const ADDITION_EFFECT = {
+  addToPrice: "ADD_TO_PRICE",
+  subtractFromPrice: "SUBTRACT_FROM_PRICE",
+  non: "NON",
+};
+
 export const ITEM_CATEGORIES = [
   { name: "Starters", color: "btn-primary" },
   { name: "Steaks", color: "btn-secondary" },
@@ -155,6 +104,11 @@ export const ITEMS = [
     category: "Desserts",
     color: "btn-secondary",
     price: 7.5,
+    totalPrice: 7.5,
+    qty: 1,
+    additions: [],
+    possibleAdditions: [],
+    message: "",
   },
   {
     name: "Cheese Cake",
@@ -163,6 +117,11 @@ export const ITEMS = [
     category: "Desserts",
     color: "btn-warning",
     price: 6.5,
+    totalPrice: 6.5,
+    qty: 1,
+    additions: [],
+    possibleAdditions: [],
+    message: "",
   },
   {
     name: "Freshstrawberries",
@@ -171,6 +130,11 @@ export const ITEMS = [
     category: "Desserts",
     color: "btn-secondary",
     price: 5,
+    totalPrice: 5,
+    qty: 1,
+    additions: [],
+    possibleAdditions: [],
+    message: "",
   },
   {
     name: "Cola",
@@ -179,7 +143,32 @@ export const ITEMS = [
     category: "Soft Drinks",
     color: "btn-secondary",
     price: 2.5,
-    possibleAdditions: ["No ice", "Battle", "Zero", "Mixer"],
+    totalPrice: 2.5,
+    qty: 1,
+    additions: [],
+    possibleAdditions: [
+      {
+        name: "No ice",
+        defaultValue: false,
+        value: false,
+        component: ADDITION_TYPE.checkbox,
+      },
+      {
+        name: "Meat",
+        defaultValue: "M",
+        value: "M",
+        component: ADDITION_TYPE.select,
+        options: ["R", "M", "W"],
+      },
+      {
+        name: "Large",
+        defaultValue: false,
+        value: false,
+        component: ADDITION_TYPE.checkbox,
+        amount: 3,
+        action: ADDITION_EFFECT.addToPrice,
+      },
+    ],
   },
   {
     name: "Cola Zero",
@@ -187,6 +176,11 @@ export const ITEMS = [
     category: "Soft Drinks",
     color: "btn-error",
     price: 2.5,
+    totalPrice: 2.5,
+    qty: 1,
+    additions: [],
+    possibleAdditions: [],
+    message: "",
   },
   {
     name: "Speggitte Carbonara",
@@ -194,6 +188,11 @@ export const ITEMS = [
     category: "Pasta",
     color: "btn-error",
     price: 12.5,
+    totalPrice: 12.5,
+    qty: 1,
+    additions: [],
+    possibleAdditions: [],
+    message: "",
   },
   {
     name: "Halumi",
@@ -202,6 +201,74 @@ export const ITEMS = [
     starter: true,
     color: "btn-error",
     price: 12.5,
+    totalPrice: 12.5,
+    qty: 1,
+    additions: [],
+    possibleAdditions: [],
+    message: "",
+  },
+  {
+    name: "Garlic Bread",
+    type: ITEM_TYPE.food,
+    category: "Starters",
+    starter: true,
+    color: "btn-info",
+    price: 6.5,
+    totalPrice: 6.5,
+    qty: 1,
+    additions: [],
+    possibleAdditions: [],
+    message: "",
+  },
+  {
+    name: "Cheese Garlic Bread",
+    type: ITEM_TYPE.food,
+    category: "Starters",
+    starter: true,
+    color: "btn-primary",
+    price: 8.5,
+    totalPrice: 8.5,
+    qty: 1,
+    additions: [],
+    possibleAdditions: [],
+    message: "",
+  },
+  {
+    name: "Prawn Cooktail",
+    type: ITEM_TYPE.food,
+    category: "Starters",
+    starter: true,
+    color: "btn-warning",
+    price: 10,
+    totalPrice: 10,
+    qty: 1,
+    additions: [],
+    possibleAdditions: [],
+    message: "",
+  },
+  {
+    name: "Steak Diana",
+    type: ITEM_TYPE.food,
+    category: "Steaks",
+    color: "btn-secondary",
+    price: 24.5,
+    totalPrice: 24.5,
+    qty: 1,
+    additions: [],
+    possibleAdditions: [],
+    message: "",
+  },
+  {
+    name: "Pepper Diana",
+    type: ITEM_TYPE.food,
+    category: "Steaks",
+    color: "btn-primary",
+    price: 26.5,
+    totalPrice: 26.5,
+    qty: 1,
+    additions: [],
+    possibleAdditions: [],
+    message: "",
   },
 ];
 

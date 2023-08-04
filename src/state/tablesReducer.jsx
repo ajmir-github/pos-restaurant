@@ -1,6 +1,11 @@
-import { PAYMENT_METHODS, TABLE_STATUS, getListOfTables } from "../utils";
+import {
+  PAYMENT_METHODS,
+  TABLE_STATUS,
+  generateID,
+  getListOfTables,
+} from "../utils";
 
-export const initialTables = getListOfTables(40);
+export const initialTables = getListOfTables(40, true);
 
 export const tablesActions = {
   openTable: "OPEN_TABLE",
@@ -11,43 +16,32 @@ export const tablesActions = {
 export function tablesReducer(state = initialTables, { type, payload }) {
   switch (type) {
     case tablesActions.openTable:
-      const { customers, tableNumber, customerName } = payload;
       return state.map((table) => {
-        if (table.tableNumber === tableNumber)
-          return {
-            tableNumber,
-            customers,
-            customerName,
-            status: TABLE_STATUS.open,
-            discountAmount: null,
-            paymentMethod: PAYMENT_METHODS.cash,
-            createdTime: null,
-            cartItems: [],
-            totalPrice: 0,
-            discount: {
-              has: false,
-              percentage: 0,
-            },
-          };
+        console.log(payload);
+        if (table.tableNumber === payload.tableNumber) return payload;
         return table;
       });
     case tablesActions.addItem:
       return state.map((table) => {
-        if (table.tableNumber === payload.tableNumber)
+        if (table.tableNumber === payload.table.tableNumber)
           return {
             ...table,
-            cartItems: [...table.cartItems, payload.item],
+            cartItems: [
+              ...table.cartItems,
+              {
+                ...payload.item,
+                sent: false,
+                _id: generateID(),
+              },
+            ],
           };
         return table;
       });
 
     case tablesActions.updateTable:
-      return state.map((table) => {
-        if (table.tableNumber === payload.tableNumber) {
-          return payload;
-        }
-        return table;
-      });
+      return state.map((table) =>
+        table.tableNumber === payload.tableNumber ? payload : table
+      );
 
     default:
       return state;

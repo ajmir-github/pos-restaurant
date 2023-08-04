@@ -1,4 +1,4 @@
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Layout from "../components/Layout";
 import TopPanel from "../components/TopPanel";
 import Feed from "../components/Feed";
@@ -15,25 +15,16 @@ import { useDispatch, useSelector } from "react-redux";
 import { tablesActions } from "../state";
 import { setTable } from "../firebase";
 
-function OpenTable({ tableNumber }) {
-  const dispatch = useDispatch();
+function OpenTable({ openTable }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     const form = new FormData(e.target);
     const customerName = form.get("customerName");
     const customers = Number(form.get("customers"));
-    const newTable = createTable({
+    openTable({
       customerName,
       customers,
-      tableNumber,
-      status: TABLE_STATUS.open,
     });
-    dispatch({
-      type: tablesActions.openTable,
-      payload: newTable,
-    });
-
-    setTable(tableNumber.toString(), newTable);
   };
   return (
     <form
@@ -72,130 +63,220 @@ function OpenTable({ tableNumber }) {
   );
 }
 
-export default function TablePage() {
-  const dispatch = useDispatch();
+class CachedArray {
+  constructor(key) {
+    this.key = key;
+    if (localStorage.getItem(this.key) === null) this.set([]);
+  }
+  get() {
+    return JSON.parse(localStorage.getItem(this.key));
+  }
+  set(value) {
+    const newData = JSON.stringify(value);
+    localStorage.setItem(this.key, newData);
+    return newData;
+  }
+  clear() {
+    return this.set([]);
+  }
+}
+
+function useTable() {
   const { tableNumber } = useParams();
-  const table = useSelector((s) =>
-    s.tables.find((t) => t.tableNumber === Number(tableNumber))
+  const navigate = useNavigate();
+  const table = useSelector((state) =>
+    state.tables.find((table) => table.tableNumber === Number(tableNumber))
   );
+  const cachedItems = new CachedArray("CACHED_ITEMS");
 
-  const addItemToCart = (item) =>
-    dispatch({
-      type: tablesActions.addItem,
-      payload: {
-        tableNumber: Number(tableNumber),
-        item: { ...item, id: generateID() },
-      },
-    });
+  const [cartItems, setCartItems] = useState([
+    ...table.cartItems,
+    ...cachedItems.get(),
+  ]);
 
-  const printReceipt = () => {
-    setTable(tableNumber, {
-      ...table,
-      status: TABLE_STATUS.closing,
-    });
-  };
+  useEffect(() => {
+    cachedItems.set(cartItems.filter((item) => !item.sent));
+  }, [cartItems]);
+
+  // table functions
+  const openTable = (entries) =>
+    setTable(
+      createTable({
+        ...entries,
+        tableNumber: table.tableNumber,
+        status: TABLE_STATUS.open,
+      })
+    );
+
+  const updateTable = (table) => setTable(table);
 
   const closeTable = () => {
+    navigate("/tables");
     setTable(
-      tableNumber,
       createTable({
-        tableNumber: Number(tableNumber),
+        tableNumber: table.tableNumber,
         status: TABLE_STATUS.close,
       })
     );
   };
 
-  const [selectedItem, setSelectedItem] = useState(null);
-
-  const editItemFromCart = (editedItem) => {
-    const editedTable = {
-      ...table,
-      cartItems: table.cartItems.map((item) =>
-        item.id === editedItem.id ? editedItem : item
-      ),
-    };
-    setTable(tableNumber, editedTable);
+  const printReceipt = () => {
+    setTable(
+      createTable({
+        tableNumber: table.tableNumber,
+        status: TABLE_STATUS.closing,
+      })
+    );
   };
 
-  const selectItem = (item, isSelected) =>
-    setSelectedItem(isSelected ? null : item);
-
-  const activeItem = (item) => {
-    if (!selectedItem) return false;
-    return selectedItem.id === item.id;
-  };
-
-  const cancelEdit = () => setSelectedItem(null);
+  // item functions
+  const addItemToCart = (item) =>
+    setCartItems([
+      ...cartItems,
+      {
+        ...item,
+        _id: generateID(),
+        sent: false,
+      },
+    ]);
+  const editItemFromCart = (editedItem) =>
+    setCartItems(
+      cartItems.map((item) =>
+        item._id === editedItem._id
+          ? {
+              editedItem,
+              edited: true,
+              sent: false,
+            }
+          : item
+      )
+    );
+  const removeItemFromCart = (item) =>
+    setCartItems(
+      cartItems.map((i) =>
+        i._id === item._id ? { ...i, removed: true, sent: false } : i
+      )
+    );
 
   const sendCart = () => {
-    const editedTable = {
+    cachedItems.clear();
+    const sentItems = cartItems
+      .filter((item) => item.removed)
+      .map((item) => (item.sent ? item : { ...item, sent: true }));
+    setCartItems(sentItems);
+    setTable({
       ...table,
-      starter: table.cartItems.some((item) => item.starter),
-    };
-    if (table.status === TABLE_STATUS.closing)
-      editedTable.status = TABLE_STATUS.open;
-    setTable(tableNumber, editedTable);
+      cartItems: sentItems,
+    });
   };
 
-  const main =
-    table.status === TABLE_STATUS.close ? (
-      <OpenTable tableNumber={Number(tableNumber)} />
-    ) : (
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
-        {/* table actions + item working element */}
-        <div className="md:col-span-2 flex flex-col gap-2">
-          {/* table actions */}
-          <div className="flex gap-2">
-            <div
-              className="btn rounded-none grow w-auto btn-outline btn-sm btn-primary"
-              onClick={closeTable}
-            >
-              Pay
-            </div>
+  return {
+    tableNumber,
+    table,
+    openTable,
+    updateTable,
+    closeTable,
+    printReceipt,
+    cartItems,
+    addItemToCart,
+    editItemFromCart,
+    removeItemFromCart,
+    sendCart,
+  };
+}
 
-            <div
-              className="btn rounded-none grow w-auto btn-outline btn-sm btn-success"
-              onClick={printReceipt}
-            >
-              Reciept
-            </div>
-            <div className="btn rounded-none grow w-auto btn-outline btn-sm btn-error">
-              Edit
-            </div>
-            <div className="btn rounded-none grow w-auto btn-outline btn-sm btn-info">
-              More
-            </div>
-          </div>
-          {/* Editing an element */}
-          {selectedItem && (
-            <EditItem
-              item={selectedItem}
-              cancelEdit={cancelEdit}
-              editItemFromCart={editItemFromCart}
-            />
-          )}
-          <div className={selectedItem ? "hidden" : "block"}>
-            {/* table feed */}
-            <Feed addItemToCart={addItemToCart} />
-          </div>
-        </div>
-        {/* table cart */}
-        <Cart
-          cartItems={table.cartItems}
-          activeItem={activeItem}
-          setSelectedItem={selectItem}
-          sendCart={sendCart}
-        />
-      </div>
-    );
+function useItemSelector(initial = null) {
+  const [selectedItem, setSelectedItem] = useState(null);
+  const selectItem = (item, isSelected) =>
+    setSelectedItem(isSelected ? null : item);
+  const isSelectedItem = (item) => {
+    if (!selectedItem) return false;
+    return selectedItem._id === item._id;
+  };
+  const cancelEdit = () => setSelectedItem(null);
+  return {
+    selectedItem,
+    selectItem,
+    isSelectedItem,
+    cancelEdit,
+  };
+}
+
+export default function TablePage() {
+  const {
+    tableNumber,
+    table,
+    openTable,
+    updateTable,
+    closeTable,
+    printReceipt,
+    cartItems,
+    addItemToCart,
+    editItemFromCart,
+    removeItemFromCart,
+    sendCart,
+  } = useTable();
+
+  const { selectedItem, selectItem, isSelectedItem, cancelEdit } =
+    useItemSelector();
 
   return (
     <Layout>
       <TopPanel backHref={"/tables"} userName={"Ajmir Raziqi"}>
-        <span>Table:{table.tableNumber}</span>
+        <span>Table:{tableNumber}</span>
         <span>Customers:{table.customers}</span>
       </TopPanel>
-      {main}
+      {table.status === TABLE_STATUS.close ? (
+        <OpenTable openTable={openTable} />
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+          {/* table actions + item working element */}
+          <div className="md:col-span-2 flex flex-col gap-2">
+            {/* table actions */}
+            <div className="flex gap-2">
+              <div
+                className="btn rounded-none grow w-auto btn-outline btn-sm btn-primary"
+                onClick={closeTable}
+              >
+                Pay
+              </div>
+
+              <div
+                className="btn rounded-none grow w-auto btn-outline btn-sm btn-success"
+                onClick={printReceipt}
+              >
+                Reciept
+              </div>
+              <div className="btn rounded-none grow w-auto btn-outline btn-sm btn-error">
+                Edit
+              </div>
+              <div className="btn rounded-none grow w-auto btn-outline btn-sm btn-info">
+                More
+              </div>
+            </div>
+            {/* Editing an element */}
+            {selectedItem && (
+              <EditItem
+                item={selectedItem}
+                cancelEdit={cancelEdit}
+                editItemFromCart={editItemFromCart}
+                removeItemFromCart={removeItemFromCart}
+              />
+            )}
+            <div className={selectedItem ? "hidden" : "block"}>
+              {/* table feed */}
+              <Feed addItemToCart={addItemToCart} />
+            </div>
+          </div>
+          {/* table cart */}
+          <Cart
+            cartItems={cartItems}
+            isSelectedItem={isSelectedItem}
+            setSelectedItem={selectItem}
+            sendCart={sendCart}
+          />
+        </div>
+      )}
     </Layout>
   );
 }

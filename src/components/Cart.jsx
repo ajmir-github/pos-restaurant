@@ -2,7 +2,7 @@ import { EURO_SYMBOL, classes, ITEM_GROUPS, ADDITION_TYPE } from "../utils";
 
 export default function Cart({
   cartItems,
-  activeItem,
+  isSelectedItem,
   setSelectedItem,
   sendCart,
 }) {
@@ -21,11 +21,11 @@ export default function Cart({
                 <summary className="rounded-none">{group.name}</summary>
                 <ul>
                   {cartItems.filter(group.filterFunc).map((item) => {
-                    const isSelected = activeItem(item);
+                    const isSelected = isSelectedItem(item);
                     const isMultiple = item.qty > 1;
 
                     return (
-                      <li key={item.id}>
+                      <li key={item._id}>
                         <button
                           className={classes(
                             "flex flex-col gap-0",
@@ -34,9 +34,25 @@ export default function Cart({
                           )}
                           onClick={() => setSelectedItem(item, isSelected)}
                         >
-                          <div className={"flex w-full"}>
-                            <span className="grow flex  items-center gap-1">
+                          <div className={"flex w-full gap-1"}>
+                            <span className="grow flex  items-center justify-between gap-1">
                               {isMultiple && item.qty + "x"} {item.name}{" "}
+                              <span className="flex gap-1 flex-col">
+                                {item.removed && (
+                                  <span className="badge badge-error badge-xs p-1 h-3">
+                                    removed
+                                  </span>
+                                )}
+                                {item.sent ? (
+                                  <span className="badge badge-info badge-xs  p-1 h-3">
+                                    saved
+                                  </span>
+                                ) : (
+                                  <span className="badge badge-warning badge-xs p-1 h-3">
+                                    unsaved
+                                  </span>
+                                )}
+                              </span>
                             </span>
                             {isMultiple ? (
                               <span className="flex gap-1">
@@ -57,9 +73,11 @@ export default function Cart({
                             )}
                           </div>
                           <div className="flex w-full flex-col pl-4">
-                            {(item.additions || []).map((addition, index) => (
-                              <div key={item.id + ":CART_ADDITION:" + addition}>
-                                {addition}
+                            {(item.more || []).map((points, index) => (
+                              <div
+                                key={item.id + ":CART_MORE_POINTS:" + points}
+                              >
+                                {points}
                               </div>
                             ))}
                             {item.message && <div>{item.message}</div>}

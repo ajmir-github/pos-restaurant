@@ -4,8 +4,9 @@ import { doc, setDoc, collection, onSnapshot } from "firebase/firestore";
 const tableCollectionName = "Tables";
 const tablesRef = collection(database, tableCollectionName);
 
-export const setTable = async (tableNumber, table) => {
-  await setDoc(doc(database, tableCollectionName, tableNumber), table);
+export const setTable = async (table) => {
+  const tableId = table.tableNumber.toString();
+  await setDoc(doc(database, tableCollectionName, tableId), table);
   console.log("Table is set!");
 };
 
