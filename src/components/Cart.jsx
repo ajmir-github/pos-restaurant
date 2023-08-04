@@ -43,11 +43,7 @@ export default function Cart({
                                     removed
                                   </span>
                                 )}
-                                {item.sent ? (
-                                  <span className="badge badge-info badge-xs  p-1 h-3">
-                                    saved
-                                  </span>
-                                ) : (
+                                {item.sent || (
                                   <span className="badge badge-warning badge-xs p-1 h-3">
                                     unsaved
                                   </span>

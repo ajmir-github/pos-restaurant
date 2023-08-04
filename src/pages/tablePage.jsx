@@ -64,8 +64,9 @@ function OpenTable({ openTable }) {
 }
 
 class CachedArray {
-  constructor(key) {
-    this.key = key;
+  constructor(key, tableNumber) {
+    this.key = key + tableNumber;
+    console.log(this.key);
     if (localStorage.getItem(this.key) === null) this.set([]);
   }
   get() {
@@ -74,10 +75,10 @@ class CachedArray {
   set(value) {
     const newData = JSON.stringify(value);
     localStorage.setItem(this.key, newData);
-    return newData;
   }
   clear() {
-    return this.set([]);
+    localStorage.removeItem(this.key);
+    this.set([]);
   }
 }
 
@@ -87,12 +88,14 @@ function useTable() {
   const table = useSelector((state) =>
     state.tables.find((table) => table.tableNumber === Number(tableNumber))
   );
-  const cachedItems = new CachedArray("CACHED_ITEMS");
 
-  const [cartItems, setCartItems] = useState([
-    ...table.cartItems,
-    ...cachedItems.get(),
-  ]);
+  const cachedItems = new CachedArray("CACHED_ITEMS", tableNumber);
+
+  const [cartItems, setCartItems] = useState([]);
+
+  useEffect(() => {
+    setCartItems([...table.cartItems, ...cachedItems.get()]);
+  }, [table, tableNumber]);
 
   useEffect(() => {
     cachedItems.set(cartItems.filter((item) => !item.sent));
@@ -161,7 +164,7 @@ function useTable() {
   const sendCart = () => {
     cachedItems.clear();
     const sentItems = cartItems
-      .filter((item) => item.removed)
+      .filter((item) => !item.removed)
       .map((item) => (item.sent ? item : { ...item, sent: true }));
     setCartItems(sentItems);
     setTable({
