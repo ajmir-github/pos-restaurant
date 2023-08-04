@@ -72,19 +72,15 @@ function useTable() {
 
   const [cartItems, setCartItems] = useState(table.cartItems);
 
-  useEffect(() => {
-    setCartItems(table.cartItems);
-  }, [table]);
+  useEffect(() => setCartItems(table.cartItems), [table]);
 
   // table functions
   const openTable = (entries) =>
-    setTable(
-      createTable({
-        ...entries,
-        tableNumber: table.tableNumber,
-        status: TABLE_STATUS.open,
-      })
-    );
+    setTable({
+      ...table,
+      ...entries,
+      status: TABLE_STATUS.open,
+    });
 
   const updateTable = (table) => setTable(table);
 
@@ -99,12 +95,10 @@ function useTable() {
   };
 
   const printReceipt = () => {
-    setTable(
-      createTable({
-        tableNumber: table.tableNumber,
-        status: TABLE_STATUS.closing,
-      })
-    );
+    setTable({
+      ...table,
+      status: TABLE_STATUS.closing,
+    });
   };
 
   // item functions

@@ -21,6 +21,11 @@ export default function EditItem({
   const increment = () => setQty(qty + 1);
   const decrement = () => qty > 1 && setQty(qty - 1);
 
+  const removeItem = () => {
+    removeItemFromCart(item);
+    cancelEdit();
+  };
+
   const onSave = () => {
     editItemFromCart(
       deepClone({
@@ -207,7 +212,7 @@ export default function EditItem({
         </div>
         <div
           className="btn rounded-none grow w-auto btn-outline btn-sm btn-error"
-          onClick={() => removeItemFromCart(item)}
+          onClick={removeItem}
         >
           Remove
         </div>
