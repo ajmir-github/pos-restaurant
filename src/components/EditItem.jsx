@@ -4,6 +4,7 @@ import {
   ITEM_TYPE,
   classes,
   ADDITION_TYPE,
+  ADDITION_EFFECT,
 } from "../utils";
 import { useEffect, useState } from "react";
 
@@ -27,14 +28,24 @@ export default function EditItem({
   };
 
   const onSave = () => {
-    editItemFromCart({
+    const editedItem = {
       ...item,
       qty,
       price,
       starter,
       message,
       additions,
-    });
+    };
+    editedItem.totalPrice = editedItem.additions.reduce((total, addition) => {
+      if (addition.action === ADDITION_EFFECT.addToPrice) {
+        return total + addition.amount;
+      }
+      if (addition.action === ADDITION_EFFECT.subtractFromPrice) {
+        return total - addition.amount;
+      }
+      return total;
+    }, editedItem.price);
+    editItemFromCart(editedItem);
     cancelEdit();
   };
 

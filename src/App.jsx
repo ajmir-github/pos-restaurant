@@ -3,27 +3,32 @@ import HomePage from "./pages/homePage";
 import TabelsPage from "./pages/tablesPage";
 import TablePage from "./pages/tablePage";
 import { useEffect, useState } from "react";
-import { trackChanges } from "./firebase";
+import { orderRef, tablesRef, trackChanges } from "./firebase";
 import { useDispatch } from "react-redux";
-import { tablesActions } from "./state";
+import { ordersActions, tablesActions } from "./state";
+import KitchenPage from "./pages/kitchenPage";
+import PageLoading from "./components/PageLoading";
 
 function App() {
-  const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
+  const [loading, setLoading] = useState({ tables: true, orders: true });
+  const isLoading = () => !(loading.tables || loading.orders);
   useEffect(() => {
-    const unsubscribe = trackChanges((table) => {
+    const tableUnsubscribe = trackChanges(tablesRef, (table) => {
       dispatch({ type: tablesActions.updateTable, payload: table });
-      if (loading) setLoading(false);
+      if (isLoading()) setLoading({ ...loading, tables: false });
     });
-    return unsubscribe;
+    const orderUnsubscribe = trackChanges(orderRef, (order) => {
+      dispatch({ type: ordersActions.updateOrder, payload: order });
+      if (isLoading()) setLoading({ ...loading, orders: false });
+    });
+    return () => {
+      tableUnsubscribe();
+      orderUnsubscribe();
+    };
   }, []);
 
-  const PageLoading = () => (
-    <div className="w-full min-h-screen flex justify-center items-center">
-      <span className="loading loading-infinity loading-lg"></span>
-    </div>
-  );
-  return loading ? (
+  return isLoading() ? (
     <PageLoading />
   ) : (
     <BrowserRouter>
@@ -31,6 +36,7 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/tables" element={<TabelsPage />} />
         <Route path="/table/:tableNumber" element={<TablePage />} />
+        <Route path="/kitchen" element={<KitchenPage />} />
       </Routes>
     </BrowserRouter>
   );

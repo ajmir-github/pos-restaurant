@@ -1,4 +1,10 @@
-import { EURO_SYMBOL, classes, ITEM_GROUPS, ADDITION_TYPE } from "../utils";
+import {
+  EURO_SYMBOL,
+  classes,
+  ITEM_GROUPS,
+  ADDITION_TYPE,
+  ADDITION_EFFECT,
+} from "../utils";
 
 export default function Cart({
   cartItems,
@@ -7,7 +13,7 @@ export default function Cart({
   sendCart,
 }) {
   const total = cartItems.reduce(
-    (art, item) => art + item.price * (item.qty || 1),
+    (art, item) => art + item.totalPrice * (item.qty || 1),
     0
   );
   return (
@@ -16,7 +22,7 @@ export default function Cart({
         <ul className="menu  font-bold  p-0 [&_li>*]:rounded-none [&_summary>*]:rounded-none">
           <li className="menu-title">Cart</li>
           {ITEM_GROUPS.map((group) => (
-            <li className="" key={"GROUP:" + group.id}>
+            <li className="" key={"GROUP:" + group._}>
               <details open className="">
                 <summary className="rounded-none">{group.name}</summary>
                 <ul>
@@ -30,7 +36,8 @@ export default function Cart({
                           className={classes(
                             "flex flex-col gap-0",
                             isSelected && "border-l-4 border-l-primary",
-                            item.edited && "border-r-4 border-r-warning"
+                            item.edited && "border-r-4 border-r-warning",
+                            item.removed && "btn-disabled line-through"
                           )}
                           onClick={() => setSelectedItem(item, isSelected)}
                         >
@@ -38,11 +45,6 @@ export default function Cart({
                             <span className="grow flex  items-center justify-between gap-1">
                               {isMultiple && item.qty + "x"} {item.name}{" "}
                               <span className="flex gap-1 flex-col">
-                                {item.removed && (
-                                  <span className="badge badge-error badge-xs p-1 h-3">
-                                    removed
-                                  </span>
-                                )}
                                 {item.sent || (
                                   <span className="badge badge-warning badge-xs p-1 h-3">
                                     unsaved
@@ -54,26 +56,49 @@ export default function Cart({
                               <span className="flex gap-1">
                                 <span>
                                   {EURO_SYMBOL}
-                                  {item.price}
+                                  {item.totalPrice}
                                 </span>
                                 <span>
                                   {EURO_SYMBOL}
-                                  {item.price * item.qty}
+                                  {item.totalPrice * item.qty}
                                 </span>
                               </span>
                             ) : (
                               <span>
                                 {EURO_SYMBOL}
-                                {item.price}
+                                {item.totalPrice}
                               </span>
                             )}
                           </div>
                           <div className="flex w-full flex-col pl-4">
-                            {(item.more || []).map((points, index) => (
+                            {(item.additions || []).map((addition, index) => (
                               <div
-                                key={item.id + ":CART_MORE_POINTS:" + points}
+                                key={
+                                  item._id + ":CART_ADDITIONS_INDEX:" + index
+                                }
+                                className="flex gap-2 items-center"
                               >
-                                {points}
+                                <span>
+                                  {addition.component === ADDITION_TYPE.select
+                                    ? addition.name + " : " + addition.value
+                                    : addition.name}
+                                </span>
+                                {addition.action ===
+                                  ADDITION_EFFECT.addToPrice && (
+                                  <span className="badge badge-sm  badge-outline badge-info">
+                                    {EURO_SYMBOL}
+                                    {item.price}+{EURO_SYMBOL}
+                                    {addition.amount}
+                                  </span>
+                                )}
+                                {addition.action ===
+                                  ADDITION_EFFECT.subtractFromPrice && (
+                                  <span className="badge badge-sm  badge-outline badge-info">
+                                    {EURO_SYMBOL}
+                                    {item.price}-{EURO_SYMBOL}
+                                    {addition.amount}
+                                  </span>
+                                )}
                               </div>
                             ))}
                             {item.message && <div>{item.message}</div>}

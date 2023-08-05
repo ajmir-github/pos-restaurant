@@ -2,7 +2,9 @@ import { database } from "./config";
 import { doc, setDoc, collection, onSnapshot } from "firebase/firestore";
 
 const tableCollectionName = "Tables";
-const tablesRef = collection(database, tableCollectionName);
+const orderCollectionName = "Orders";
+export const tablesRef = collection(database, tableCollectionName);
+export const orderRef = collection(database, orderCollectionName);
 
 export const setTable = async (table) => {
   const tableId = table.tableNumber.toString();
@@ -25,8 +27,8 @@ export const CHANGE_TYPES = {
   removed: "removed",
 };
 
-export function trackChanges(onChange) {
-  const unsubscribe = onSnapshot(tablesRef, (querySnapshot) => {
+export function trackChanges(colRef, onChange) {
+  const unsubscribe = onSnapshot(colRef, (querySnapshot) => {
     // const tables = [];
     // querySnapshot.forEach((doc) => {
     //   tables.push(normalizeFirebaseDoc(doc));
@@ -47,4 +49,9 @@ export function trackChanges(onChange) {
   });
 
   return () => unsubscribe();
+}
+
+export async function addOrder(order) {
+  await setDoc(doc(database, orderCollectionName, order._id), order);
+  console.log("Order sent!");
 }

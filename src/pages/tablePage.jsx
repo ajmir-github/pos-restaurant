@@ -1,193 +1,12 @@
-import { Link, useNavigate, useParams } from "react-router-dom";
 import Layout from "../components/Layout";
 import TopPanel from "../components/TopPanel";
 import Feed from "../components/Feed";
-import { useEffect, useState } from "react";
 import EditItem from "../components/EditItem";
 import Cart from "../components/Cart";
-import {
-  PAYMENT_METHODS,
-  TABLE_STATUS,
-  createTable,
-  generateID,
-} from "../utils";
-import { useDispatch, useSelector } from "react-redux";
-import { tablesActions } from "../state";
-import { setTable } from "../firebase";
-
-function OpenTable({ openTable }) {
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const form = new FormData(e.target);
-    const customerName = form.get("customerName");
-    const customers = Number(form.get("customers"));
-    openTable({
-      customerName,
-      customers,
-    });
-  };
-  return (
-    <form
-      className="flex grow flex-col gap-2 items-center"
-      onSubmit={handleSubmit}
-    >
-      <div className="w-full max-w-sm">
-        <div className="opacity-60">Customer's Name</div>
-        <div className="flex join rounded-none">
-          <input
-            type="text"
-            className="join-item input w-full"
-            name="customerName"
-          />
-        </div>
-      </div>
-      <div className="w-full max-w-sm">
-        <div className="opacity-60">Number of customers</div>
-        <div className="flex join rounded-none">
-          <input
-            type="number"
-            className="join-item input w-full"
-            name="customers"
-            required
-          />
-        </div>
-      </div>
-
-      <button
-        className="btn w-full max-w-sm rounded-none btn-primary"
-        type="submit"
-      >
-        Open
-      </button>
-    </form>
-  );
-}
-
-function useTable() {
-  const { tableNumber } = useParams();
-  const navigate = useNavigate();
-  const table = useSelector((state) =>
-    state.tables.find((table) => table.tableNumber === Number(tableNumber))
-  );
-
-  const [cartItems, setCartItems] = useState(table.cartItems);
-
-  useEffect(() => setCartItems(table.cartItems), [table]);
-
-  // table functions
-  const openTable = (entries) =>
-    setTable({
-      ...table,
-      ...entries,
-      status: TABLE_STATUS.open,
-    });
-
-  const updateTable = (table) => setTable(table);
-
-  const closeTable = () => {
-    navigate("/tables");
-    setTable(
-      createTable({
-        tableNumber: table.tableNumber,
-        status: TABLE_STATUS.close,
-      })
-    );
-  };
-
-  const printReceipt = () => {
-    setTable({
-      ...table,
-      status: TABLE_STATUS.closing,
-    });
-  };
-
-  // item functions
-  const addItemToCart = (item) =>
-    setCartItems([
-      ...cartItems,
-      {
-        ...item,
-        _id: generateID(),
-        sent: false,
-      },
-    ]);
-  const editItemFromCart = (editedItem) =>
-    setCartItems(
-      cartItems.map((item) =>
-        item._id === editedItem._id
-          ? {
-              ...editedItem,
-              edited: true,
-              sent: false,
-            }
-          : item
-      )
-    );
-  const removeItemFromCart = (item) =>
-    setCartItems(
-      cartItems.map((i) =>
-        i._id === item._id ? { ...i, removed: true, sent: false } : i
-      )
-    );
-
-  const sendCart = () => {
-    const newItems = [];
-    const addItem = (item) => {
-      const sentItem = { ...item, sent: true };
-      newItems.push(sentItem);
-      return sentItem;
-    };
-    const newCartItems = cartItems
-      .filter((item) => !item.removed)
-      .map((item) => (item.sent ? item : addItem(item)));
-    // --------------- sent other to the kitchen and bar
-    // console.log({
-    //   cartItems: newItems,
-    //   tableNumber: table.tableNumber,
-    //   sentAt: Number(new Date()),
-    //   types: newItems.reduce((list, item) => {
-    //     if (list.includes(item.type)) return list;
-    //     return [...list, item.type];
-    //   }, []),
-    // });
-    setTable({
-      ...table,
-      starter: newCartItems.some((item) => item.starter),
-      cartItems: newCartItems,
-    });
-  };
-
-  return {
-    tableNumber,
-    table,
-    openTable,
-    updateTable,
-    closeTable,
-    printReceipt,
-    cartItems,
-    addItemToCart,
-    editItemFromCart,
-    removeItemFromCart,
-    sendCart,
-  };
-}
-
-function useItemSelector(initial = null) {
-  const [selectedItem, setSelectedItem] = useState(null);
-  const selectItem = (item, isSelected) =>
-    setSelectedItem(isSelected ? null : item);
-  const isSelectedItem = (item) => {
-    if (!selectedItem) return false;
-    return selectedItem._id === item._id;
-  };
-  const cancelEdit = () => setSelectedItem(null);
-  return {
-    selectedItem,
-    selectItem,
-    isSelectedItem,
-    cancelEdit,
-  };
-}
+import { TABLE_STATUS } from "../utils";
+import useTable from "../hooks/useTable";
+import useItemSelector from "../hooks/useItemSelector";
+import OpenTable from "../components/OpenTable";
 
 export default function TablePage() {
   const {
@@ -207,6 +26,30 @@ export default function TablePage() {
   const { selectedItem, selectItem, isSelectedItem, cancelEdit } =
     useItemSelector();
 
+  const tableActions = (
+    <div className="flex gap-2">
+      <div
+        className="btn rounded-none grow w-auto btn-outline btn-sm btn-primary"
+        onClick={closeTable}
+      >
+        Pay
+      </div>
+
+      <div
+        className="btn rounded-none grow w-auto btn-outline btn-sm btn-success"
+        onClick={printReceipt}
+      >
+        Reciept
+      </div>
+      <div className="btn rounded-none grow w-auto btn-outline btn-sm btn-error">
+        Edit
+      </div>
+      <div className="btn rounded-none grow w-auto btn-outline btn-sm btn-info">
+        More
+      </div>
+    </div>
+  );
+
   return (
     <Layout>
       <TopPanel backHref={"/tables"} userName={"Ajmir Raziqi"}>
@@ -218,29 +61,10 @@ export default function TablePage() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
           {/* table actions + item working element */}
+
           <div className="md:col-span-2 flex flex-col gap-2">
             {/* table actions */}
-            <div className="flex gap-2">
-              <div
-                className="btn rounded-none grow w-auto btn-outline btn-sm btn-primary"
-                onClick={closeTable}
-              >
-                Pay
-              </div>
-
-              <div
-                className="btn rounded-none grow w-auto btn-outline btn-sm btn-success"
-                onClick={printReceipt}
-              >
-                Reciept
-              </div>
-              <div className="btn rounded-none grow w-auto btn-outline btn-sm btn-error">
-                Edit
-              </div>
-              <div className="btn rounded-none grow w-auto btn-outline btn-sm btn-info">
-                More
-              </div>
-            </div>
+            {tableActions}
             {/* Editing an element */}
             {selectedItem && (
               <EditItem

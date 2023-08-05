@@ -153,6 +153,7 @@ export const ITEMS = [
         defaultValue: false,
         value: false,
         component: ADDITION_TYPE.checkbox,
+        action: ADDITION_EFFECT.non,
       },
       {
         name: "Meat",
@@ -160,13 +161,14 @@ export const ITEMS = [
         value: "M",
         component: ADDITION_TYPE.select,
         options: ["R", "M", "W"],
+        action: ADDITION_EFFECT.non,
       },
       {
         name: "Large",
         defaultValue: false,
         value: false,
         component: ADDITION_TYPE.checkbox,
-        amount: 3,
+        amount: 1,
         action: ADDITION_EFFECT.addToPrice,
       },
     ],
@@ -180,7 +182,16 @@ export const ITEMS = [
     totalPrice: 2.5,
     qty: 1,
     additions: [],
-    possibleAdditions: [],
+    possibleAdditions: [
+      {
+        name: "No ice",
+        defaultValue: false,
+        value: false,
+        component: ADDITION_TYPE.checkbox,
+        action: ADDITION_EFFECT.subtractFromPrice,
+        amount: 1,
+      },
+    ],
     message: "",
   },
   {
@@ -256,7 +267,16 @@ export const ITEMS = [
     totalPrice: 24.5,
     qty: 1,
     additions: [],
-    possibleAdditions: [],
+    possibleAdditions: [
+      {
+        name: "Meat",
+        defaultValue: "Medium",
+        value: "Medium",
+        component: ADDITION_TYPE.select,
+        options: ["Rare", "Medium-rare", "Medium", "Medium-well", "Well-done"],
+        action: ADDITION_EFFECT.non,
+      },
+    ],
     message: "",
   },
   {
@@ -268,7 +288,16 @@ export const ITEMS = [
     totalPrice: 26.5,
     qty: 1,
     additions: [],
-    possibleAdditions: [],
+    possibleAdditions: [
+      {
+        name: "Meat",
+        defaultValue: "Medium",
+        value: "Medium",
+        component: ADDITION_TYPE.select,
+        options: ["Rare", "Medium-rare", "Medium", "Medium-well", "Well-done"],
+        action: ADDITION_EFFECT.non,
+      },
+    ],
     message: "",
   },
 ];

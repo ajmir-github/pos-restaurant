@@ -8,17 +8,20 @@ export default function HomePage() {
   return (
     <Layout>
       home page
-      <Link className="btn btn-primary" to={"tables"}>
+      <Link className="btn btn-primary" to={"/tables"}>
         Tables
       </Link>
+      <Link className="btn btn-secondary" to={"/kitchen"}>
+        Kitchen
+      </Link>
       <button
-        className="btn btn-secondary"
+        className="btn btn-ghost"
         onClick={() => dispatch({ type: themeActions.turnDarkTheme })}
       >
         Dark theme
       </button>
       <button
-        className="btn btn-secondary"
+        className="btn btn-ghost"
         onClick={() => dispatch({ type: themeActions.turnLightTheme })}
       >
         Light theme
