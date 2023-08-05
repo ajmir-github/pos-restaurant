@@ -91,7 +91,7 @@ export default function Cart({
           Total: {EURO_SYMBOL} {total}
         </div>
       </div>
-      {cartItems.some((item) => !item.sent || item.edited) && (
+      {cartItems.some((item) => !item.sent) && (
         <div
           className="btn rounded-none grow w-auto btn-outline btn-sm btn-warning"
           onClick={sendCart}

@@ -131,11 +131,29 @@ function useTable() {
     );
 
   const sendCart = () => {
+    const newItems = [];
+    const addItem = (item) => {
+      const sentItem = { ...item, sent: true };
+      newItems.push(sentItem);
+      return sentItem;
+    };
+    const newCartItems = cartItems
+      .filter((item) => !item.removed)
+      .map((item) => (item.sent ? item : addItem(item)));
+    // --------------- sent other to the kitchen and bar
+    // console.log({
+    //   cartItems: newItems,
+    //   tableNumber: table.tableNumber,
+    //   sentAt: Number(new Date()),
+    //   types: newItems.reduce((list, item) => {
+    //     if (list.includes(item.type)) return list;
+    //     return [...list, item.type];
+    //   }, []),
+    // });
     setTable({
       ...table,
-      cartItems: cartItems
-        .filter((item) => !item.removed)
-        .map((item) => (item.sent ? item : { ...item, sent: true })),
+      starter: newCartItems.some((item) => item.starter),
+      cartItems: newCartItems,
     });
   };
 

@@ -78,7 +78,6 @@ export default function EditItem({
             <span className="label-text">As a starter</span>
             <input
               type="checkbox"
-              defaultChecked={item.starter}
               checked={starter}
               className="checkbox"
               onChange={(e) => setStarter(e.target.checked)}
@@ -112,6 +111,7 @@ export default function EditItem({
           if (addition.component === ADDITION_TYPE.select)
             return (
               <select
+                key={item._id + addition.name}
                 className="select select-bordered w-full"
                 defaultValue={addition.value || item.defaultValue}
                 onChange={(e) =>

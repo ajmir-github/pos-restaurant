@@ -145,6 +145,7 @@ export const ITEMS = [
     price: 2.5,
     totalPrice: 2.5,
     qty: 1,
+    message: "",
     additions: [],
     possibleAdditions: [
       {
