@@ -88,6 +88,7 @@ export default function useTable() {
       _id: generateID(),
       cartItems: newItems,
       tableNumber: table.tableNumber,
+      customers: table.customers,
       sentAt: Number(new Date()),
       types: newItems.reduce((list, item) => {
         if (list.includes(item.type)) return list;

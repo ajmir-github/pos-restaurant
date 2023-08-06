@@ -80,7 +80,7 @@ export default function Cart({
                               >
                                 <span>
                                   {addition.component === ADDITION_TYPE.select
-                                    ? addition.name + " : " + addition.value
+                                    ? addition.value
                                     : addition.name}
                                 </span>
                                 {addition.action ===
