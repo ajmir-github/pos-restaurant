@@ -38,6 +38,7 @@ export default function KitchenPage() {
   );
 
   const audio = useNotification("RZFWLXE-bell-hop-bell.mp3", orders);
+  // audio.play()
   const itemFilter = (item) => item.type === ITEM_TYPE.food;
 
   return (
