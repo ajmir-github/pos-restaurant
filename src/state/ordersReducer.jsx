@@ -8,7 +8,11 @@ export const ordersActions = {
 export function ordersReducer(state = [], { type, payload }) {
   switch (type) {
     case ordersActions.updateOrder:
-      return [...state, payload];
+      if (!state.some((order) => order._id === payload._id))
+        return [...state, payload];
+      return state.map((order) =>
+        order._id === payload._id ? payload : order
+      );
     default:
       return state;
   }

@@ -1,12 +1,14 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { TABLE_STATUS, createTable, generateID } from "../utils";
-import { useSelector } from "react-redux";
+import { ORDER_STATUS, TABLE_STATUS, createTable, generateID } from "../utils";
+import { useDispatch, useSelector } from "react-redux";
 import { addOrder, setTable } from "../firebase";
+import { tablesActions } from "../state/tablesReducer";
 
 export default function useTable() {
   const { tableNumber } = useParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const table = useSelector((state) =>
     state.tables.find((table) => table.tableNumber === Number(tableNumber))
   );
@@ -20,6 +22,8 @@ export default function useTable() {
     setTable({
       ...table,
       ...entries,
+      hasStarter: false,
+      starterSent: false,
       status: TABLE_STATUS.open,
     });
 
@@ -43,7 +47,7 @@ export default function useTable() {
   };
 
   // item functions
-  const addItemToCart = (item) =>
+  const addItemToCart = (item) => {
     setCartItems([
       ...cartItems,
       {
@@ -52,6 +56,7 @@ export default function useTable() {
         sent: false,
       },
     ]);
+  };
   const editItemFromCart = (editedItem) =>
     setCartItems(
       cartItems.map((item) =>
@@ -90,6 +95,7 @@ export default function useTable() {
       tableNumber: table.tableNumber,
       customers: table.customers,
       sentAt: Number(new Date()),
+      status: ORDER_STATUS.waiting,
       types: newItems.reduce((list, item) => {
         if (list.includes(item.type)) return list;
         return [...list, item.type];

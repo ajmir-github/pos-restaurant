@@ -14,6 +14,9 @@ export default function HomePage() {
       <Link className="btn btn-secondary" to={"/kitchen"}>
         Kitchen
       </Link>
+      <Link className="btn btn-success" to={"/bar"}>
+        Bar
+      </Link>
       <button
         className="btn btn-ghost"
         onClick={() => dispatch({ type: themeActions.turnDarkTheme })}

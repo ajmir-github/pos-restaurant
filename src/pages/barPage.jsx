@@ -14,7 +14,7 @@ import useNotification from "../hooks/useNotification";
 import { useState } from "react";
 import { setOrder } from "../firebase";
 
-export default function KitchenPage() {
+export default function BarPage() {
   const FILTER_OPTIONS = {
     all: "All",
     waitingAndReady: "Waiting and Ready",
@@ -67,7 +67,11 @@ export default function KitchenPage() {
       <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
         {orders
           .filter(FILTER_FUNCS[filterOption])
-          .filter((order) => order.types.includes(ITEM_TYPE.food))
+          .filter(
+            (order) =>
+              order.types.includes(ITEM_TYPE.drink) ||
+              order.types.includes(ITEM_TYPE.dessert)
+          )
           .sort((orderA, orderB) => orderA.sentAt - orderB.sentA)
           .map((order, index) => {
             const changeOrderStatus = (status) => {
@@ -96,7 +100,11 @@ export default function KitchenPage() {
                 </div>
                 <div className="p-2 bg-base-content bg-opacity-10 gap-3 flex flex-col">
                   {order.cartItems
-                    .filter((item) => item.type === ITEM_TYPE.food)
+                    .filter(
+                      (item) =>
+                        item.type === ITEM_TYPE.drink ||
+                        item.type === ITEM_TYPE.dessert
+                    )
                     .map((item, index) => (
                       <div
                         className="flex w-full flex-col"

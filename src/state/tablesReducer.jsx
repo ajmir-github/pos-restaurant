@@ -17,7 +17,6 @@ export function tablesReducer(state = initialTables, { type, payload }) {
   switch (type) {
     case tablesActions.openTable:
       return state.map((table) => {
-        console.log(payload);
         if (table.tableNumber === payload.tableNumber) return payload;
         return table;
       });

@@ -55,3 +55,8 @@ export async function addOrder(order) {
   await setDoc(doc(database, orderCollectionName, order._id), order);
   console.log("Order sent!");
 }
+
+export async function setOrder(order) {
+  await setDoc(doc(database, orderCollectionName, order._id), order);
+  console.log("Order is set!");
+}

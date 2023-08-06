@@ -97,6 +97,13 @@ export const ITEM_CATEGORIES = [
   { name: "Desserts", color: "btn-ghost" },
 ];
 
+export const ORDER_STATUS = {
+  waiting: "WIATING",
+  working: "WORKING",
+  ready: "READY",
+  pinned: "PINNED",
+};
+
 export const ITEMS = [
   {
     name: "Lava Cake",

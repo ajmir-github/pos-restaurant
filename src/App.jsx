@@ -8,6 +8,7 @@ import { useDispatch } from "react-redux";
 import { ordersActions, tablesActions } from "./state";
 import KitchenPage from "./pages/kitchenPage";
 import PageLoading from "./components/PageLoading";
+import BarPage from "./pages/barPage";
 
 function App() {
   const dispatch = useDispatch();
@@ -37,6 +38,7 @@ function App() {
         <Route path="/tables" element={<TabelsPage />} />
         <Route path="/table/:tableNumber" element={<TablePage />} />
         <Route path="/kitchen" element={<KitchenPage />} />
+        <Route path="/bar" element={<BarPage />} />
       </Routes>
     </BrowserRouter>
   );
