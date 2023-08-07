@@ -11,8 +11,101 @@ import {
 import Layout from "../components/Layout";
 import TopPanel from "../components/TopPanel";
 import useNotification from "../hooks/useNotification";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { setOrder } from "../firebase";
+import dayjs from "dayjs";
+
+function timeDiff(date) {
+  const minutes = dayjs(new Date()).diff(date, "minute");
+  if (minutes <= 1) return "Now";
+  return minutes + " mins";
+}
+
+function Order({ order }) {
+  const changeOrderStatus = (status) => {
+    setOrder({
+      ...order,
+      status,
+    });
+  };
+  const [timePassed, setTimePassed] = useState("");
+  const checkPassedTime = (unsubFunc) => {
+    if (!order.sentAt) return unsubFunc();
+    setTimePassed(timeDiff(order.sentAt));
+  };
+  useEffect(() => {
+    checkPassedTime();
+    const unsub = setInterval(
+      () => checkPassedTime(() => clearInterval(unsub)),
+      1000 * 60
+    );
+    return () => clearInterval(unsub);
+  }, []);
+  return (
+    <div className="flex flex-col">
+      <div className="">
+        <div className="flex justify-between px-2 font-bold">
+          <span>Table: {order.tableNumber}</span>
+          <span>Customers: {order.customers}</span>
+        </div>
+
+        <div className="px-2">
+          <div className="px-2">{timePassed}</div>
+        </div>
+      </div>
+      <div className="p-2 bg-base-content bg-opacity-10 gap-3 flex flex-col">
+        {order.cartItems
+          .filter((item) => item.type === ITEM_TYPE.food)
+          .map((item, index) => (
+            <div className="flex w-full flex-col" key={index}>
+              <div className="">
+                {index + 1} - {item.name}
+              </div>
+              {(item.additions || []).map((addition, index) => (
+                <div
+                  key={item._id + ":ORDER_ADDITIONS_INDEX:" + index}
+                  className="ml-4 flex gap-2 items-center"
+                >
+                  {addition.component === ADDITION_TYPE.select
+                    ? addition.value
+                    : addition.name}
+                </div>
+              ))}
+              {item.message && <div className="ml-4">{item.message}</div>}
+            </div>
+          ))}
+      </div>
+      <div className="bg-base-content bg-opacity-10 flex">
+        {conditionalComponents(order.status, {
+          [ORDER_STATUS.waiting]: (
+            <button
+              className=" btn rounded-none btn-primary  border-none btn-sm grow"
+              onClick={() => changeOrderStatus(ORDER_STATUS.working)}
+            >
+              Take
+            </button>
+          ),
+          [ORDER_STATUS.working]: (
+            <button
+              className=" btn rounded-none btn-success  border-none btn-sm grow"
+              onClick={() => changeOrderStatus(ORDER_STATUS.ready)}
+            >
+              Ready
+            </button>
+          ),
+          [ORDER_STATUS.ready]: (
+            <button
+              className=" btn rounded-none btn-error  border-none btn-sm grow"
+              onClick={() => changeOrderStatus(ORDER_STATUS.pinned)}
+            >
+              Pin
+            </button>
+          ),
+        })}
+      </div>
+    </div>
+  );
+}
 
 export default function KitchenPage() {
   const FILTER_OPTIONS = {
@@ -49,11 +142,11 @@ export default function KitchenPage() {
     <Layout>
       <TopPanel backHref={"/"} userName={"Ajmir Raziqi"}>
         <span>Orders:{orders.length}</span>
-        {/* <span>Customers:{table.customers}</span> */}
       </TopPanel>
       <div className="tabs tabs-boxed flex">
-        {FILTER_OPTIONS_ARRAY.map((key) => (
+        {FILTER_OPTIONS_ARRAY.map((key, index) => (
           <button
+            key={index}
             onClick={() => setFilterOption(FILTER_OPTIONS[key])}
             className={classes(
               "tab grow",
@@ -69,89 +162,9 @@ export default function KitchenPage() {
           .filter(FILTER_FUNCS[filterOption])
           .filter((order) => order.types.includes(ITEM_TYPE.food))
           .sort((orderA, orderB) => orderA.sentAt - orderB.sentA)
-          .map((order, index) => {
-            const changeOrderStatus = (status) => {
-              setOrder({
-                ...order,
-                status,
-              });
-            };
-
-            return (
-              <div key={order._id} className="flex flex-col">
-                <div className="">
-                  <div className="flex justify-between px-2 font-bold">
-                    <span>Table: {order.tableNumber}</span>
-                    <span>Customers: {order.customers}</span>
-                  </div>
-
-                  <div className="px-2">
-                    {new Date(order.sentAt)
-                      .toTimeString()
-                      .split(" ")[0]
-                      .split(":")
-                      .slice(0, 2)
-                      .join(":")}
-                  </div>
-                </div>
-                <div className="p-2 bg-base-content bg-opacity-10 gap-3 flex flex-col">
-                  {order.cartItems
-                    .filter((item) => item.type === ITEM_TYPE.food)
-                    .map((item, index) => (
-                      <div
-                        className="flex w-full flex-col"
-                        key={item._id + "IN_ORDER"}
-                      >
-                        <div className="">
-                          {index + 1} - {item.name}
-                        </div>
-                        {(item.additions || []).map((addition, index) => (
-                          <div
-                            key={item._id + ":ORDER_ADDITIONS_INDEX:" + index}
-                            className="ml-4 flex gap-2 items-center"
-                          >
-                            {addition.component === ADDITION_TYPE.select
-                              ? addition.value
-                              : addition.name}
-                          </div>
-                        ))}
-                        {item.message && (
-                          <div className="ml-4">{item.message}</div>
-                        )}
-                      </div>
-                    ))}
-                </div>
-                <div className="bg-base-content bg-opacity-10 flex">
-                  {conditionalComponents(order.status, {
-                    [ORDER_STATUS.waiting]: (
-                      <button
-                        className=" btn rounded-none btn-primary  border-none btn-sm grow"
-                        onClick={() => changeOrderStatus(ORDER_STATUS.working)}
-                      >
-                        Take
-                      </button>
-                    ),
-                    [ORDER_STATUS.working]: (
-                      <button
-                        className=" btn rounded-none btn-success  border-none btn-sm grow"
-                        onClick={() => changeOrderStatus(ORDER_STATUS.ready)}
-                      >
-                        Ready
-                      </button>
-                    ),
-                    [ORDER_STATUS.ready]: (
-                      <button
-                        className=" btn rounded-none btn-error  border-none btn-sm grow"
-                        onClick={() => changeOrderStatus(ORDER_STATUS.pinned)}
-                      >
-                        Pin
-                      </button>
-                    ),
-                  })}
-                </div>
-              </div>
-            );
-          })}
+          .map((order) => (
+            <Order order={order} key={order._id} />
+          ))}
       </div>
     </Layout>
   );

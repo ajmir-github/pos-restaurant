@@ -23,7 +23,7 @@ export default function Cart({
         <ul className="menu  font-bold  p-0 [&_li>*]:rounded-none [&_summary>*]:rounded-none">
           <li className="menu-title">Cart</li>
           {ITEM_GROUPS.map((group) => (
-            <li className="" key={"GROUP:" + group._}>
+            <li className="" key={"GROUP:" + group._id}>
               <details open className="">
                 <summary className="rounded-none">{group.name}</summary>
                 <ul>
@@ -46,11 +46,6 @@ export default function Cart({
                             <span className="grow flex  items-center justify-between gap-1">
                               {isMultiple && item.qty + "x"} {item.name}{" "}
                               <span className="flex gap-1 flex-col">
-                                {item.saved || (
-                                  <span className="badge badge-warning badge-xs p-1 h-3">
-                                    unsaved
-                                  </span>
-                                )}
                                 {item.sent ? (
                                   <span className="badge badge-warning badge-xs p-1 h-3">
                                     Sent
@@ -126,16 +121,8 @@ export default function Cart({
           Total: {EURO_SYMBOL} {total}
         </div>
       </div>
-      {cartItems.some((item) => !item.saved) && (
-        <div
-          className="btn rounded-none grow w-auto btn-outline btn-sm btn-warning"
-          onClick={saveCart}
-        >
-          Save
-        </div>
-      )}
-      {cartItems.every((item) => item.saved) &&
-        cartItems.some((item) => !item.sent) &&
+
+      {cartItems.some((item) => !item.sent) &&
         (cartItems.some((item) => item.starter && !item.sent) ? (
           <div
             className="btn rounded-none grow w-auto btn-outline btn-sm btn-info"
@@ -148,7 +135,7 @@ export default function Cart({
             className="btn rounded-none grow w-auto btn-outline btn-sm btn-success"
             onClick={() => sendCart(true)}
           >
-            Send
+            Send Mains
           </div>
         ))}
     </div>

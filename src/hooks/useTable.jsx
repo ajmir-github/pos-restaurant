@@ -31,6 +31,7 @@ export default function useTable() {
       hasStarter: false,
       starterSent: false,
       status: TABLE_STATUS.open,
+      createdAt: Number(new Date()),
     });
 
   const updateTable = (table) => setTable(table);
@@ -54,37 +55,37 @@ export default function useTable() {
 
   // item functions
   const addItemToCart = (item) => {
-    setCartItems([
-      ...cartItems,
-      {
-        ...item,
-        _id: generateID(),
-        sent: false,
-        saved: false,
-      },
-    ]);
+    setTable({
+      ...table,
+      cartItems: [
+        ...cartItems,
+        {
+          ...item,
+          _id: generateID(),
+          sent: false,
+        },
+      ],
+    });
   };
   const editItemFromCart = (editedItem) =>
-    setCartItems(
-      cartItems.map((item) =>
+    setTable({
+      ...table,
+      cartItems: cartItems.map((item) =>
         item._id === editedItem._id
           ? {
               ...editedItem,
               edited: true, // this is to tell the kichen that it was sent once
               sent: false,
-              saved: false,
             }
           : item
-      )
-    );
-  const removeItemFromCart = (item) =>
-    setCartItems(
-      cartItems.map((i) =>
-        i._id === item._id
-          ? { ...i, removed: true, sent: false, totalPrice: 0 }
-          : i
-      )
-    );
+      ),
+    });
+
+  const removeItemFromCart = (itemA) =>
+    setTable({
+      ...table,
+      cartItems: cartItems.filter((itemB) => itemB._id !== itemA._id),
+    });
 
   const sendCart = (mains) => {
     let unsentItems = [];
