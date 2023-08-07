@@ -1,6 +1,12 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { ORDER_STATUS, TABLE_STATUS, createTable, generateID } from "../utils";
+import {
+  ITEM_TYPE,
+  ORDER_STATUS,
+  TABLE_STATUS,
+  createTable,
+  generateID,
+} from "../utils";
 import { useDispatch, useSelector } from "react-redux";
 import { addOrder, setTable } from "../firebase";
 import { tablesActions } from "../state/tablesReducer";
@@ -54,6 +60,7 @@ export default function useTable() {
         ...item,
         _id: generateID(),
         sent: false,
+        saved: false,
       },
     ]);
   };
@@ -63,8 +70,9 @@ export default function useTable() {
         item._id === editedItem._id
           ? {
               ...editedItem,
-              edited: true,
+              edited: true, // this is to tell the kichen that it was sent once
               sent: false,
+              saved: false,
             }
           : item
       )
@@ -78,30 +86,58 @@ export default function useTable() {
       )
     );
 
-  const sendCart = () => {
-    const newItems = [];
-    const addItem = (item) => {
-      const sentItem = { ...item, sent: true };
-      newItems.push(sentItem);
-      return sentItem;
-    };
-    const newCartItems = cartItems
-      .filter((item) => !item.removed)
-      .map((item) => (item.sent ? item : addItem(item)));
+  const sendCart = (mains) => {
+    let unsentItems = [];
+    const addItem = (item) => unsentItems.push({ ...item, sent: true });
+    table.cartItems.forEach((item) => {
+      if (item.sent) return;
+      // if not food
+      if (item.type !== ITEM_TYPE.food) return addItem(item);
+      // if food
+      if (!mains && item.starter) return addItem(item);
+      if (mains && !item.starter) return addItem(item);
+    });
+
+    let newItems = table.cartItems.map(
+      (item) => unsentItems.find((i) => i._id === item._id) || item
+    );
+
+    setTable({
+      ...table,
+      starter: newItems.some((item) => item.starter),
+      cartItems: newItems,
+    });
+
     // --------------- sent other to the kitchen and bar
     addOrder({
       _id: generateID(),
-      cartItems: newItems,
+      cartItems: unsentItems,
       tableNumber: table.tableNumber,
       customers: table.customers,
       sentAt: Number(new Date()),
       status: ORDER_STATUS.waiting,
-      types: newItems.reduce((list, item) => {
+      types: unsentItems.reduce((list, item) => {
         if (list.includes(item.type)) return list;
         return [...list, item.type];
       }, []),
     });
+  };
+
+  const saveCart = () => {
+    const newItems = [];
+    const addItem = (item) => {
+      const newItem = {
+        ...item,
+        saved: true,
+      };
+      newItems.push(newItem);
+      return newItem;
+    };
+    const newCartItems = cartItems
+      .filter((item) => !item.removed)
+      .map((item) => (item.sent ? item : addItem(item)));
     // update the table
+
     setTable({
       ...table,
       starter: newCartItems.some((item) => item.starter),
@@ -120,6 +156,7 @@ export default function useTable() {
     addItemToCart,
     editItemFromCart,
     removeItemFromCart,
+    saveCart,
     sendCart,
   };
 }

@@ -20,6 +20,7 @@ export default function TablePage() {
     addItemToCart,
     editItemFromCart,
     removeItemFromCart,
+    saveCart,
     sendCart,
   } = useTable();
 
@@ -84,6 +85,7 @@ export default function TablePage() {
             cartItems={cartItems}
             isSelectedItem={isSelectedItem}
             setSelectedItem={selectItem}
+            saveCart={saveCart}
             sendCart={sendCart}
           />
         </div>

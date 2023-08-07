@@ -10,6 +10,7 @@ export default function Cart({
   cartItems,
   isSelectedItem,
   setSelectedItem,
+  saveCart,
   sendCart,
 }) {
   const total = cartItems.reduce(
@@ -45,9 +46,18 @@ export default function Cart({
                             <span className="grow flex  items-center justify-between gap-1">
                               {isMultiple && item.qty + "x"} {item.name}{" "}
                               <span className="flex gap-1 flex-col">
-                                {item.sent || (
+                                {item.saved || (
                                   <span className="badge badge-warning badge-xs p-1 h-3">
                                     unsaved
+                                  </span>
+                                )}
+                                {item.sent ? (
+                                  <span className="badge badge-warning badge-xs p-1 h-3">
+                                    Sent
+                                  </span>
+                                ) : (
+                                  <span className="badge badge-warning badge-xs p-1 h-3">
+                                    not sent
                                   </span>
                                 )}
                               </span>
@@ -116,14 +126,31 @@ export default function Cart({
           Total: {EURO_SYMBOL} {total}
         </div>
       </div>
-      {cartItems.some((item) => !item.sent) && (
+      {cartItems.some((item) => !item.saved) && (
         <div
           className="btn rounded-none grow w-auto btn-outline btn-sm btn-warning"
-          onClick={sendCart}
+          onClick={saveCart}
         >
-          Send
+          Save
         </div>
       )}
+      {cartItems.every((item) => item.saved) &&
+        cartItems.some((item) => !item.sent) &&
+        (cartItems.some((item) => item.starter && !item.sent) ? (
+          <div
+            className="btn rounded-none grow w-auto btn-outline btn-sm btn-info"
+            onClick={() => sendCart(false)}
+          >
+            Send Starter
+          </div>
+        ) : (
+          <div
+            className="btn rounded-none grow w-auto btn-outline btn-sm btn-success"
+            onClick={() => sendCart(true)}
+          >
+            Send
+          </div>
+        ))}
     </div>
   );
 }
