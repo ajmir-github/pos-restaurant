@@ -10,6 +10,7 @@ import Layout from "../components/Layout";
 import { useSelector } from "react-redux";
 import { useEffect, useMemo, useState } from "react";
 import dayjs from "dayjs";
+import { ICON_PEOPLE, ICON_TABLES } from "../utils/icons";
 
 export default function TablesPage() {
   const tables = useSelector((s) => s.tables);
@@ -27,8 +28,14 @@ export default function TablesPage() {
   return (
     <Layout>
       <TopPanel backHref={"/"} userName={"Ajmir Raziqi"}>
-        <span>Tables:{stats.tables}</span>
-        <span>Customers:{stats.customers}</span>
+        <span className="flex gap-2 items-center ">
+          {ICON_TABLES}
+          {stats.tables}
+        </span>
+        <span className="flex gap-2 items-center">
+          {ICON_PEOPLE}
+          {stats.customers}
+        </span>
       </TopPanel>
       <div className="flex gap-1 sm:gap-2 flex-wrap justify-center">
         {tables.map((table) => {

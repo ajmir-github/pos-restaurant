@@ -7,6 +7,15 @@ import { TABLE_STATUS } from "../utils";
 import useTable from "../hooks/useTable";
 import useItemSelector from "../hooks/useItemSelector";
 import OpenTable from "../components/OpenTable";
+import {
+  ICON_EDIT,
+  ICON_HASH,
+  ICON_MORE,
+  ICON_PAY,
+  ICON_PEOPLE,
+  ICON_PRINTER,
+  ICON_TABLES,
+} from "../utils/icons";
 
 export default function TablePage() {
   const {
@@ -30,8 +39,14 @@ export default function TablePage() {
   return (
     <Layout>
       <TopPanel backHref={"/tables"} userName={"Ajmir Raziqi"}>
-        <span>Table:{tableNumber}</span>
-        <span>Customers:{table.customers}</span>
+        <span className="flex gap-2 items-center ">
+          {ICON_HASH}
+          {tableNumber}
+        </span>
+        <span className="flex gap-2 items-center">
+          {ICON_PEOPLE}
+          {table.customers}
+        </span>
       </TopPanel>
       {table.status === TABLE_STATUS.close ? (
         <OpenTable openTable={openTable} />
@@ -46,6 +61,7 @@ export default function TablePage() {
                 className="btn join-item grow  btn-primary"
                 onClick={closeTable}
               >
+                {ICON_PAY}
                 Pay
               </div>
 
@@ -53,10 +69,17 @@ export default function TablePage() {
                 className="btn join-item grow  btn-primary"
                 onClick={printReceipt}
               >
+                {ICON_PRINTER}
                 Reciept
               </div>
-              <div className="btn join-item grow  btn-primary">Edit</div>
-              <div className="btn join-item grow  btn-primary">More</div>
+              <div className="btn join-item grow  btn-primary">
+                {ICON_EDIT}
+                Edit
+              </div>
+              <div className="btn join-item grow  btn-primary">
+                {ICON_MORE}
+                More
+              </div>
             </div>
             {/* Editing an element */}
             {selectedItem && (

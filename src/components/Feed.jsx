@@ -1,5 +1,6 @@
 import { classes, ITEMS, ITEM_CATEGORIES } from "../utils";
 import { useState } from "react";
+import { ICON_ARROW_LEFT, ICON_X_MARK } from "../utils/icons";
 
 export default function Feed({ addItemToCart }) {
   const [category, setCategory] = useState(null);
@@ -29,6 +30,7 @@ export default function Feed({ addItemToCart }) {
             className="btn btn-secondary btn-outline"
             onClick={() => setSearch("")}
           >
+            {ICON_X_MARK}
             Clear
           </button>
         ) : (
@@ -37,6 +39,7 @@ export default function Feed({ addItemToCart }) {
             disabled={category === null}
             onClick={() => setCategory(null)}
           >
+            {ICON_ARROW_LEFT}
             Back
           </button>
         )}

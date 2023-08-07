@@ -7,6 +7,7 @@ import {
   ADDITION_EFFECT,
 } from "../utils";
 import { useEffect, useState } from "react";
+import { ICON_CHECK, ICON_TRASH, ICON_X_MARK } from "../utils/icons";
 
 export default function EditItem({
   item,
@@ -213,12 +214,15 @@ export default function EditItem({
 
       <div className="join">
         <div className="btn join-item  grow btn-primary" onClick={onSave}>
+          {ICON_CHECK}
           Save
         </div>
         <div className="btn join-item  grow btn-primary" onClick={removeItem}>
+          {ICON_TRASH}
           Remove
         </div>
         <div className="btn join-item  grow btn-primary" onClick={cancelEdit}>
+          {ICON_X_MARK}
           Cancel
         </div>
       </div>

@@ -5,6 +5,7 @@ import {
   ADDITION_TYPE,
   ADDITION_EFFECT,
 } from "../utils";
+import { ICON_SEND } from "../utils/icons";
 
 export default function Cart({
   cartItems,
@@ -18,7 +19,7 @@ export default function Cart({
     0
   );
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 justify-start items-stretch">
       <div className="bg-base-100 flex flex-col text-lg">
         <ul className="menu ">
           {ITEM_GROUPS.map((group) => (
@@ -119,17 +120,13 @@ export default function Cart({
 
       {cartItems.some((item) => !item.sent) &&
         (cartItems.some((item) => item.starter && !item.sent) ? (
-          <div
-            className="btn  grow w-auto  btn-info"
-            onClick={() => sendCart(false)}
-          >
+          <div className="btn grow btn-info" onClick={() => sendCart(false)}>
+            {ICON_SEND}
             Send Starter
           </div>
         ) : (
-          <div
-            className="btn  grow w-auto  btn-success"
-            onClick={() => sendCart(true)}
-          >
+          <div className="btn grow btn-success" onClick={() => sendCart(true)}>
+            {ICON_SEND}
             Send Mains
           </div>
         ))}

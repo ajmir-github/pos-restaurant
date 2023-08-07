@@ -14,6 +14,7 @@ import useNotification from "../hooks/useNotification";
 import { useEffect, useState } from "react";
 import { setOrder } from "../firebase";
 import dayjs from "dayjs";
+import { ICON_STACK } from "../utils/icons";
 
 function Order({ order }) {
   const changeOrderStatus = (status) => {
@@ -142,8 +143,10 @@ export default function BarPage() {
   return (
     <Layout>
       <TopPanel backHref={"/"} userName={"Ajmir Raziqi"}>
-        <span>Orders:{orders.length}</span>
-        {/* <span>Customers:{table.customers}</span> */}
+        <span className="flex gap-2 items-center">
+          {ICON_STACK}
+          {orders.length}
+        </span>
       </TopPanel>
       <div className="tabs tabs-boxed flex">
         {FILTER_OPTIONS_ARRAY.map((key, index) => (
