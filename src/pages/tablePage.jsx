@@ -27,30 +27,6 @@ export default function TablePage() {
   const { selectedItem, selectItem, isSelectedItem, cancelEdit } =
     useItemSelector();
 
-  const tableActions = (
-    <div className="flex gap-2">
-      <div
-        className="btn rounded-none grow w-auto btn-outline btn-sm btn-primary"
-        onClick={closeTable}
-      >
-        Pay
-      </div>
-
-      <div
-        className="btn rounded-none grow w-auto btn-outline btn-sm btn-success"
-        onClick={printReceipt}
-      >
-        Reciept
-      </div>
-      <div className="btn rounded-none grow w-auto btn-outline btn-sm btn-error">
-        Edit
-      </div>
-      <div className="btn rounded-none grow w-auto btn-outline btn-sm btn-info">
-        More
-      </div>
-    </div>
-  );
-
   return (
     <Layout>
       <TopPanel backHref={"/tables"} userName={"Ajmir Raziqi"}>
@@ -65,7 +41,23 @@ export default function TablePage() {
 
           <div className="md:col-span-2 flex flex-col gap-2">
             {/* table actions */}
-            {tableActions}
+            <div className="flex join">
+              <div
+                className="btn join-item grow  btn-primary"
+                onClick={closeTable}
+              >
+                Pay
+              </div>
+
+              <div
+                className="btn join-item grow  btn-primary"
+                onClick={printReceipt}
+              >
+                Reciept
+              </div>
+              <div className="btn join-item grow  btn-primary">Edit</div>
+              <div className="btn join-item grow  btn-primary">More</div>
+            </div>
             {/* Editing an element */}
             {selectedItem && (
               <EditItem

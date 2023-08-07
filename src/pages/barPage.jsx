@@ -51,7 +51,7 @@ function Order({ order }) {
 
         <div className="px-2">{timePassed}</div>
       </div>
-      <div className="p-2 bg-base-content bg-opacity-10 gap-3 flex flex-col">
+      <div className="p-2 gap-3 flex flex-col base-content">
         {order.cartItems
           .filter(
             (item) =>
@@ -76,11 +76,11 @@ function Order({ order }) {
             </div>
           ))}
       </div>
-      <div className="bg-base-content bg-opacity-10 flex">
+      <div className="flex">
         {conditionalComponents(order.status, {
           [ORDER_STATUS.waiting]: (
             <button
-              className=" btn rounded-none btn-primary  border-none btn-sm grow"
+              className=" btn  btn-primary   grow"
               onClick={() => changeOrderStatus(ORDER_STATUS.working)}
             >
               Take
@@ -88,7 +88,7 @@ function Order({ order }) {
           ),
           [ORDER_STATUS.working]: (
             <button
-              className=" btn rounded-none btn-success  border-none btn-sm grow"
+              className=" btn  btn-success   grow"
               onClick={() => changeOrderStatus(ORDER_STATUS.ready)}
             >
               Ready
@@ -96,7 +96,7 @@ function Order({ order }) {
           ),
           [ORDER_STATUS.ready]: (
             <button
-              className=" btn rounded-none btn-error  border-none btn-sm grow"
+              className=" btn  btn-error   grow"
               onClick={() => changeOrderStatus(ORDER_STATUS.pinned)}
             >
               Pin

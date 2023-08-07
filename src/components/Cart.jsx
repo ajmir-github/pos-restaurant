@@ -19,13 +19,12 @@ export default function Cart({
   );
   return (
     <div className="flex flex-col gap-2">
-      <div className="bg-base-100 flex flex-col">
-        <ul className="menu  font-bold  p-0 [&_li>*]:rounded-none [&_summary>*]:rounded-none">
-          <li className="menu-title">Cart</li>
+      <div className="bg-base-100 flex flex-col text-lg">
+        <ul className="menu ">
           {ITEM_GROUPS.map((group) => (
-            <li className="" key={"GROUP:" + group._id}>
+            <li className="text-lg" key={"GROUP:" + group._id}>
               <details open className="">
-                <summary className="rounded-none">{group.name}</summary>
+                <summary>{group.name}</summary>
                 <ul>
                   {cartItems.filter(group.filterFunc).map((item) => {
                     const isSelected = isSelectedItem(item);
@@ -35,7 +34,7 @@ export default function Cart({
                       <li key={item._id}>
                         <button
                           className={classes(
-                            "flex flex-col gap-0",
+                            "flex flex-col gap-1",
                             isSelected && "border-l-4 border-l-primary",
                             item.edited && "border-r-4 border-r-warning",
                             item.removed && "btn-disabled line-through"
@@ -46,11 +45,7 @@ export default function Cart({
                             <span className="grow flex  items-center justify-between gap-1">
                               {isMultiple && item.qty + "x"} {item.name}{" "}
                               <span className="flex gap-1 flex-col">
-                                {item.sent ? (
-                                  <span className="badge badge-warning badge-xs p-1 h-3">
-                                    Sent
-                                  </span>
-                                ) : (
+                                {item.sent || (
                                   <span className="badge badge-warning badge-xs p-1 h-3">
                                     not sent
                                   </span>
@@ -125,14 +120,14 @@ export default function Cart({
       {cartItems.some((item) => !item.sent) &&
         (cartItems.some((item) => item.starter && !item.sent) ? (
           <div
-            className="btn rounded-none grow w-auto btn-outline btn-sm btn-info"
+            className="btn  grow w-auto  btn-info"
             onClick={() => sendCart(false)}
           >
             Send Starter
           </div>
         ) : (
           <div
-            className="btn rounded-none grow w-auto btn-outline btn-sm btn-success"
+            className="btn  grow w-auto  btn-success"
             onClick={() => sendCart(true)}
           >
             Send Mains

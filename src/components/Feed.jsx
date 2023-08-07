@@ -19,21 +19,21 @@ export default function Feed({ addItemToCart }) {
       <input
         type="text"
         placeholder="Search Here"
-        className="input input-bordered rounded-none w-full"
+        className="input input-bordered  w-full"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
       />
       <div className="flex gap-2 flex-wrap">
         {searchMode ? (
           <button
-            className="btn rounded-none btn-sm md:btn-md btn-secondary btn-outline"
+            className="btn btn-secondary btn-outline"
             onClick={() => setSearch("")}
           >
             Clear
           </button>
         ) : (
           <button
-            className="btn rounded-none btn-sm md:btn-md btn-secondary btn-outline"
+            className="btn btn-secondary btn-outline"
             disabled={category === null}
             onClick={() => setCategory(null)}
           >
@@ -44,10 +44,7 @@ export default function Feed({ addItemToCart }) {
           ? ITEMS.filter(filterFunc).map((item, index) => (
               <button
                 onClick={() => addItemToCart(item)}
-                className={classes(
-                  "btn rounded-none btn-sm md:btn-md",
-                  item.color
-                )}
+                className={classes("btn", item.color)}
                 key={item.name + index}
               >
                 {item.name}
@@ -56,10 +53,7 @@ export default function Feed({ addItemToCart }) {
           : ITEM_CATEGORIES.map((category, index) => (
               <button
                 onClick={() => setCategory(category.name)}
-                className={classes(
-                  "btn rounded-none btn-sm md:btn-md",
-                  category.color
-                )}
+                className={classes("btn", category.color)}
                 key={category.name + index}
               >
                 {category.name}

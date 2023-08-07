@@ -5,7 +5,7 @@ export default function Layout({ children }) {
   return (
     <div
       data-theme={theme}
-      className=" flex flex-col min-h-screen p-1 md:p-2 gap-2 "
+      className=" flex flex-col min-h-screen p-1 md:p-2 gap-2"
     >
       {children}
     </div>

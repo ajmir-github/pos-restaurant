@@ -90,7 +90,7 @@ export default function EditItem({
             <input
               type="checkbox"
               checked={starter}
-              className="checkbox"
+              className="checkbox "
               onChange={(e) => setStarter(e.target.checked)}
             />
           </label>
@@ -141,7 +141,7 @@ export default function EditItem({
 
       <div>
         <div className="opacity-60">Number of items</div>
-        <div className="flex join rounded-none">
+        <div className="flex join">
           <button
             className="join-item btn btn-primary text-lg"
             onClick={decrement}
@@ -164,12 +164,12 @@ export default function EditItem({
 
           <input
             type="number"
-            className="join-item input w-full"
+            className="join-item input w-full input-bordered"
             value={qty}
             onChange={(e) => setQty(Number(e.target.value) || 1)}
           />
           <button
-            className="join-item btn btn-secondary text-lg"
+            className="join-item btn btn-primary text-lg"
             onClick={increment}
           >
             <svg
@@ -191,10 +191,10 @@ export default function EditItem({
       </div>
       <div>
         <div className="opacity-60">Price per item</div>
-        <div className="flex join rounded-none">
+        <div className="flex join">
           <input
             type="number"
-            className="join-item input w-full"
+            className="join-item input w-full input-bordered"
             value={price}
             onChange={(e) => setPrice(Number(e.target.value))}
           />
@@ -204,30 +204,21 @@ export default function EditItem({
       <div>
         <div className="opacity-60">Message</div>
         <textarea
-          className="textarea rounded-none w-full"
+          className="textarea w-full input-bordered"
           placeholder="Write your message here!"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
         ></textarea>
       </div>
 
-      <div className="flex gap-2">
-        <div
-          className="btn rounded-none grow w-auto btn-outline btn-sm btn-success"
-          onClick={onSave}
-        >
+      <div className="join">
+        <div className="btn join-item  grow btn-primary" onClick={onSave}>
           Save
         </div>
-        <div
-          className="btn rounded-none grow w-auto btn-outline btn-sm btn-error"
-          onClick={removeItem}
-        >
+        <div className="btn join-item  grow btn-primary" onClick={removeItem}>
           Remove
         </div>
-        <div
-          className="btn rounded-none grow w-auto btn-outline btn-sm btn-warning"
-          onClick={cancelEdit}
-        >
+        <div className="btn join-item  grow btn-primary" onClick={cancelEdit}>
           Cancel
         </div>
       </div>

@@ -1,10 +1,43 @@
 import { Link } from "react-router-dom";
 import Layout from "../components/Layout";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { themeActions } from "../state";
+
+const THEMES = [
+  "light",
+  "dark",
+  "cupcake",
+  "bumblebee",
+  "emerald",
+  "corporate",
+  "synthwave",
+  "retro",
+  "cyberpunk",
+  "valentine",
+  "halloween",
+  "garden",
+  "forest",
+  "aqua",
+  "lofi",
+  "pastel",
+  "fantasy",
+  "wireframe",
+  "black",
+  "luxury",
+  "dracula",
+  "cmyk",
+  "autumn",
+  "business",
+  "acid",
+  "lemonade",
+  "night",
+  "coffee",
+  "winter",
+];
 
 export default function HomePage() {
   const dispatch = useDispatch();
+  const theme = useSelector((state) => state.theme);
   return (
     <Layout>
       home page
@@ -29,6 +62,17 @@ export default function HomePage() {
       >
         Light theme
       </button>
+      <select
+        className="select select-bordered w-full"
+        value={theme}
+        onChange={(e) =>
+          dispatch({ type: themeActions.chooseTheme, payload: e.target.value })
+        }
+      >
+        {THEMES.map((theme) => (
+          <option>{theme}</option>
+        ))}
+      </select>
     </Layout>
   );
 }
