@@ -27,7 +27,7 @@ export default function TablesPage() {
   );
   return (
     <Layout>
-      <TopPanel backHref={"/"} userName={"Ajmir Raziqi"}>
+      <TopPanel backHref={"/"}>
         <span className="flex gap-2 items-center ">
           {ICON_TABLES}
           {stats.tables}
@@ -56,7 +56,7 @@ export default function TablesPage() {
               checkPassedTime() || clearInterval(unsub);
             }, 1000 * 60);
             return () => clearInterval(unsub);
-          }, [table]);
+          }, []);
           return (
             <Link
               to={`/table/${table.tableNumber}`}

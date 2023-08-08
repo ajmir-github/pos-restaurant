@@ -5,7 +5,13 @@ import {
   ADDITION_TYPE,
   ADDITION_EFFECT,
 } from "../utils";
-import { ICON_SEND } from "../utils/icons";
+import {
+  ICON_EDIT,
+  ICON_MORE,
+  ICON_PAY,
+  ICON_PRINTER,
+  ICON_SEND,
+} from "../utils/icons";
 
 export default function Cart({
   cartItems,
@@ -13,6 +19,8 @@ export default function Cart({
   setSelectedItem,
   saveCart,
   sendCart,
+  closeTable,
+  printReceipt,
 }) {
   const total = cartItems.reduce(
     (art, item) => art + item.totalPrice * (item.qty || 1),
@@ -20,10 +28,26 @@ export default function Cart({
   );
   return (
     <div className="flex flex-col gap-2 justify-start items-stretch">
-      <div className="bg-base-100 flex flex-col text-lg">
-        <ul className="menu ">
+      <div className="flex join">
+        <div className="btn join-item grow  btn-success" onClick={closeTable}>
+          {ICON_PAY}
+          Pay
+        </div>
+
+        <div className="btn join-item grow  btn-warning" onClick={printReceipt}>
+          {ICON_PRINTER}
+          Reciept
+        </div>
+
+        <div className="btn join-item grow  btn-primary">
+          {ICON_MORE}
+          More
+        </div>
+      </div>
+      <div className="bg-gray-500 bg-opacity-10 rounded-box flex flex-col">
+        <ul className="menu menu-sm sm:menu-md">
           {ITEM_GROUPS.map((group) => (
-            <li className="text-lg" key={"GROUP:" + group._id}>
+            <li className="font-bold" key={"GROUP:" + group._id}>
               <details open className="">
                 <summary>{group.name}</summary>
                 <ul>

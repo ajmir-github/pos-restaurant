@@ -70,7 +70,7 @@ export default function HomePage() {
         }
       >
         {THEMES.map((theme) => (
-          <option>{theme}</option>
+          <option key={theme}>{theme}</option>
         ))}
       </select>
     </Layout>

@@ -38,7 +38,7 @@ export default function TablePage() {
 
   return (
     <Layout>
-      <TopPanel backHref={"/tables"} userName={"Ajmir Raziqi"}>
+      <TopPanel backHref={"/tables"}>
         <span className="flex gap-2 items-center ">
           {ICON_HASH}
           {tableNumber}
@@ -51,36 +51,10 @@ export default function TablePage() {
       {table.status === TABLE_STATUS.close ? (
         <OpenTable openTable={openTable} />
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
           {/* table actions + item working element */}
 
-          <div className="md:col-span-2 flex flex-col gap-2">
-            {/* table actions */}
-            <div className="flex join">
-              <div
-                className="btn join-item grow  btn-primary"
-                onClick={closeTable}
-              >
-                {ICON_PAY}
-                Pay
-              </div>
-
-              <div
-                className="btn join-item grow  btn-primary"
-                onClick={printReceipt}
-              >
-                {ICON_PRINTER}
-                Reciept
-              </div>
-              <div className="btn join-item grow  btn-primary">
-                {ICON_EDIT}
-                Edit
-              </div>
-              <div className="btn join-item grow  btn-primary">
-                {ICON_MORE}
-                More
-              </div>
-            </div>
+          <div className="lg:col-span-2 flex flex-col gap-2">
             {/* Editing an element */}
             {selectedItem && (
               <EditItem
@@ -102,6 +76,8 @@ export default function TablePage() {
             setSelectedItem={selectItem}
             saveCart={saveCart}
             sendCart={sendCart}
+            closeTable={closeTable}
+            printReceipt={printReceipt}
           />
         </div>
       )}
