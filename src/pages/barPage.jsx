@@ -1,7 +1,6 @@
 import { useSelector } from "react-redux";
 import {
-  ADDITION_EFFECT,
-  ADDITION_TYPE,
+  MOD_COMPONENT,
   EURO_SYMBOL,
   ITEM_TYPE,
   ORDER_STATUS,
@@ -63,17 +62,21 @@ function Order({ order }) {
               <div className="">
                 {index + 1} - {item.name}
               </div>
-              {(item.additions || []).map((addition, index) => (
-                <div
-                  key={item._id + ":ORDER_ADDITIONS_INDEX:" + index}
-                  className="ml-4 flex gap-2 items-center"
-                >
-                  {addition.component === ADDITION_TYPE.select
-                    ? addition.value
-                    : addition.name}
-                </div>
-              ))}
-              {item.message && <div className="ml-4">{item.message}</div>}
+              {item.mods
+                .filter((mod) => mod.required || mod.defaultValue !== mod.value)
+                .map((mod, index) => (
+                  <div
+                    key={item._id + ":ORDER_MODS_INDEX:" + index}
+                    className="ml-4 flex gap-2 items-center text-secondary"
+                  >
+                    {mod.component === MOD_COMPONENT.select
+                      ? mod.value
+                      : mod.name}
+                  </div>
+                ))}
+              {item.message && (
+                <div className="ml-4 text-secondary">{item.message}</div>
+              )}
             </div>
           ))}
       </div>

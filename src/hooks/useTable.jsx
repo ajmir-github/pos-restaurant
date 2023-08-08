@@ -23,18 +23,65 @@ export default function useTable() {
 
   useEffect(() => setCartItems(table.cartItems), [table]);
 
+  function getTabelWithStatus(table) {
+    return {
+      ...table,
+      stats: {
+        // starters
+        hasStarters: table.cartItems.some(
+          (item) => item.type === ITEM_TYPE.food && item.starter
+        ),
+        hasSentStarters: table.cartItems.some(
+          (item) => item.type === ITEM_TYPE.food && item.starter && item.sent
+        ),
+        hasUnsentStarters: table.cartItems.some(
+          (item) => item.type === ITEM_TYPE.food && item.starter && !item.sent
+        ),
+        // mains
+        hasMains: table.cartItems.some(
+          (item) => item.type === ITEM_TYPE.food && !item.starter
+        ),
+        hasSentMains: table.cartItems.some(
+          (item) => item.type === ITEM_TYPE.food && !item.starter && item.sent
+        ),
+        hasUnsentMains: table.cartItems.some(
+          (item) => item.type === ITEM_TYPE.food && !item.starter && !item.sent
+        ),
+        // drinks
+        hasDrinks: table.cartItems.some(
+          (item) => item.type === ITEM_TYPE.drink
+        ),
+        hasSentDrinks: table.cartItems.some(
+          (item) => item.type === ITEM_TYPE.drink && item.sent
+        ),
+        hasUnsentDrinks: table.cartItems.some(
+          (item) => item.type === ITEM_TYPE.drink && !item.sent
+        ),
+        // desserts
+        hasDesserts: table.cartItems.some(
+          (item) => item.type === ITEM_TYPE.dessert
+        ),
+        hasSentDesserts: table.cartItems.some(
+          (item) => item.type === ITEM_TYPE.dessert && item.sent
+        ),
+        hasUnsentDesserts: table.cartItems.some(
+          (item) => item.type === ITEM_TYPE.dessert && !item.sent
+        ),
+      },
+    };
+  }
+  function updateTable(table) {
+    setTable(getTabelWithStatus(table));
+  }
+
   // table functions
   const openTable = (entries) =>
-    setTable({
+    updateTable({
       ...table,
       ...entries,
-      hasStarter: false,
-      starterSent: false,
       status: TABLE_STATUS.open,
       createdAt: Number(new Date()),
     });
-
-  const updateTable = (table) => setTable(table);
 
   const closeTable = () => {
     navigate("/tables");
@@ -51,11 +98,12 @@ export default function useTable() {
       ...table,
       status: TABLE_STATUS.closing,
     });
+    navigate("/print-receipt/" + tableNumber);
   };
 
   // item functions
   const addItemToCart = (item) => {
-    setTable({
+    updateTable({
       ...table,
       cartItems: [
         ...cartItems,
@@ -68,7 +116,7 @@ export default function useTable() {
     });
   };
   const editItemFromCart = (editedItem) =>
-    setTable({
+    updateTable({
       ...table,
       cartItems: cartItems.map((item) =>
         item._id === editedItem._id
@@ -82,7 +130,7 @@ export default function useTable() {
     });
 
   const removeItemFromCart = (itemA) =>
-    setTable({
+    updateTable({
       ...table,
       cartItems: cartItems.filter((itemB) => itemB._id !== itemA._id),
     });
@@ -99,9 +147,8 @@ export default function useTable() {
       (item) => unsentItems.find((i) => i._id === item._id) || item
     );
 
-    setTable({
+    updateTable({
       ...table,
-      starter: newItems.some((item) => item.starter),
       cartItems: newItems,
     });
 
@@ -135,9 +182,8 @@ export default function useTable() {
       .map((item) => (item.sent ? item : addItem(item)));
     // update the table
 
-    setTable({
+    updateTable({
       ...table,
-      starter: newCartItems.some((item) => item.starter),
       cartItems: newCartItems,
     });
   };

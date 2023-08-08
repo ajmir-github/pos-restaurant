@@ -2,8 +2,8 @@ import {
   EURO_SYMBOL,
   classes,
   ITEM_GROUPS,
-  ADDITION_TYPE,
-  ADDITION_EFFECT,
+  MOD_COMPONENT,
+  MODE_TYPE,
   ITEM_TYPE,
 } from "../utils";
 import {
@@ -15,6 +15,7 @@ import {
 } from "../utils/icons";
 
 export default function Cart({
+  table,
   cartItems,
   isSelectedItem,
   setSelectedItem,
@@ -97,36 +98,38 @@ export default function Cart({
                             )}
                           </div>
                           <div className="flex w-full flex-col pl-4">
-                            {(item.additions || []).map((addition, index) => (
-                              <div
-                                key={
-                                  item._id + ":CART_ADDITIONS_INDEX:" + index
-                                }
-                                className="flex gap-2 items-center"
-                              >
-                                <span>
-                                  {addition.component === ADDITION_TYPE.select
-                                    ? addition.value
-                                    : addition.name}
-                                </span>
-                                {addition.action ===
-                                  ADDITION_EFFECT.addToPrice && (
-                                  <span className="badge badge-sm  badge-outline badge-info">
-                                    {EURO_SYMBOL}
-                                    {item.price}+{EURO_SYMBOL}
-                                    {addition.amount}
+                            {(item.mods || [])
+                              .filter(
+                                (mod) =>
+                                  mod.required || mod.defaultValue !== mod.value
+                              )
+                              .map((mode, index) => (
+                                <div
+                                  key={item._id + ":CART_MODS_INDEX:" + index}
+                                  className="flex gap-2 items-center"
+                                >
+                                  <span>
+                                    {mode.component === MOD_COMPONENT.select
+                                      ? mode.value
+                                      : mode.name}
                                   </span>
-                                )}
-                                {addition.action ===
-                                  ADDITION_EFFECT.subtractFromPrice && (
-                                  <span className="badge badge-sm  badge-outline badge-info">
-                                    {EURO_SYMBOL}
-                                    {item.price}-{EURO_SYMBOL}
-                                    {addition.amount}
-                                  </span>
-                                )}
-                              </div>
-                            ))}
+                                  {mode.action === MODE_TYPE.addToPrice && (
+                                    <span className="badge badge-sm  badge-outline badge-info">
+                                      {EURO_SYMBOL}
+                                      {item.price}+{EURO_SYMBOL}
+                                      {mode.amount}
+                                    </span>
+                                  )}
+                                  {mode.action ===
+                                    MODE_TYPE.subtractFromPrice && (
+                                    <span className="badge badge-sm  badge-outline badge-info">
+                                      {EURO_SYMBOL}
+                                      {item.price}-{EURO_SYMBOL}
+                                      {mode.amount}
+                                    </span>
+                                  )}
+                                </div>
+                              ))}
                             {item.message && <div>{item.message}</div>}
                           </div>
                         </button>
@@ -143,79 +146,60 @@ export default function Cart({
         </div>
       </div>
 
-      {cartItems.some((item) => !item.sent) && (
-        <div className="flex flex-col gap-2">
-          {cartItems.some(
-            (item) => ITEM_TYPE.drink === item.type && !item.sent
-          ) && (
-            <div
-              className="btn grow btn-secondary"
-              onClick={() =>
-                sendCart(
-                  (item) =>
-                    [ITEM_TYPE.dessert, ITEM_TYPE.drink].includes(item.type) &&
-                    !item.sent
-                )
-              }
-            >
-              {ICON_SEND}
-              Drinks
-            </div>
-          )}
-          {cartItems.some(
-            (item) => ITEM_TYPE.dessert === item.type && !item.sent
-          ) && (
-            <div
-              className="btn grow btn-secondary"
-              onClick={() =>
-                sendCart(
-                  (item) =>
-                    [ITEM_TYPE.dessert, ITEM_TYPE.drink].includes(item.type) &&
-                    !item.sent
-                )
-              }
-            >
-              {ICON_SEND}
-              Desserts
-            </div>
-          )}
+      <div className="flex flex-col gap-2">
+        {table.stats.hasUnsentDrinks && (
+          <div
+            className="btn grow btn-primary"
+            onClick={() =>
+              sendCart((item) => ITEM_TYPE.drink === item.type && !item.sent)
+            }
+          >
+            {ICON_SEND}
+            Drinks
+          </div>
+        )}
+        {table.stats.hasUnsentDesserts && (
+          <div
+            className="btn grow btn-secondary"
+            onClick={() =>
+              sendCart((item) => ITEM_TYPE.dessert === item.type && !item.sent)
+            }
+          >
+            {ICON_SEND}
+            Desserts
+          </div>
+        )}
 
-          {cartItems.some(
-            (item) => item.type === ITEM_TYPE.food && item.starter && !item.sent
-          ) && (
-            <div
-              className="btn grow btn-info"
-              onClick={() =>
-                sendCart(
-                  (item) =>
-                    item.type === ITEM_TYPE.food && item.starter && !item.sent
-                )
-              }
-            >
-              {ICON_SEND}
-              Starter
-            </div>
-          )}
+        {table.stats.hasUnsentStarters && (
+          <div
+            className="btn grow btn-info"
+            onClick={() =>
+              sendCart(
+                (item) =>
+                  item.type === ITEM_TYPE.food && item.starter && !item.sent
+              )
+            }
+          >
+            {ICON_SEND}
+            Starter
+          </div>
+        )}
 
-          {cartItems.some(
-            (item) =>
-              item.type === ITEM_TYPE.food && !item.starter && !item.sent
-          ) && (
-            <div
-              className="btn grow btn-success"
-              onClick={() =>
-                sendCart(
-                  (item) =>
-                    item.type === ITEM_TYPE.food && !item.starter && !item.sent
-                )
-              }
-            >
-              {ICON_SEND}
-              Mains
-            </div>
-          )}
-        </div>
-      )}
+        {table.stats.hasUnsentMains && (
+          <div
+            className="btn grow btn-success"
+            onClick={() =>
+              sendCart(
+                (item) =>
+                  item.type === ITEM_TYPE.food && !item.starter && !item.sent
+              )
+            }
+          >
+            {ICON_SEND}
+            Mains
+          </div>
+        )}
+      </div>
     </div>
   );
 }

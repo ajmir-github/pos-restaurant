@@ -9,6 +9,7 @@ import { ordersActions, tablesActions } from "./state";
 import KitchenPage from "./pages/kitchenPage";
 import PageLoading from "./components/PageLoading";
 import BarPage from "./pages/barPage";
+import PrintReceiptPage from "./pages/printReceiptPage";
 
 function App() {
   const dispatch = useDispatch();
@@ -39,6 +40,10 @@ function App() {
         <Route path="/table/:tableNumber" element={<TablePage />} />
         <Route path="/kitchen" element={<KitchenPage />} />
         <Route path="/bar" element={<BarPage />} />
+        <Route
+          path="/print-receipt/:tableNumber"
+          element={<PrintReceiptPage />}
+        />
       </Routes>
     </BrowserRouter>
   );

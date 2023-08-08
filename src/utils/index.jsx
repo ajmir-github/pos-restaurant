@@ -33,6 +33,7 @@ export function createTable(entries) {
     createdTime: null,
     cartItems: [],
     totalPrice: 0,
+    stats: {},
     discount: {
       has: false,
       percentage: 0,
@@ -67,14 +68,14 @@ export const ITEM_TYPE = {
   dessert: "dessert",
 };
 
-export const ADDITION_TYPE = {
+export const MOD_COMPONENT = {
   checkbox: "checkbox",
   select: "select",
   numberInput: "numberInput",
   textInput: "textInput",
 };
 
-export const ADDITION_EFFECT = {
+export const MODE_TYPE = {
   addToPrice: "ADD_TO_PRICE",
   subtractFromPrice: "SUBTRACT_FROM_PRICE",
   non: "NON",
@@ -113,8 +114,8 @@ export const ITEMS = [
     price: 7.5,
     totalPrice: 7.5,
     qty: 1,
-    additions: [],
-    possibleAdditions: [],
+
+    mods: [],
     message: "",
   },
   {
@@ -126,8 +127,8 @@ export const ITEMS = [
     price: 6.5,
     totalPrice: 6.5,
     qty: 1,
-    additions: [],
-    possibleAdditions: [],
+
+    mods: [],
     message: "",
   },
   {
@@ -139,8 +140,8 @@ export const ITEMS = [
     price: 5,
     totalPrice: 5,
     qty: 1,
-    additions: [],
-    possibleAdditions: [],
+
+    mods: [],
     message: "",
   },
   {
@@ -153,30 +154,22 @@ export const ITEMS = [
     totalPrice: 2.5,
     qty: 1,
     message: "",
-    additions: [],
-    possibleAdditions: [
+    mods: [
       {
         name: "No ice",
         defaultValue: false,
         value: false,
-        component: ADDITION_TYPE.checkbox,
-        action: ADDITION_EFFECT.non,
+        component: MOD_COMPONENT.checkbox,
+        type: MODE_TYPE.non,
       },
       {
-        name: "Meat",
-        defaultValue: "M",
-        value: "M",
-        component: ADDITION_TYPE.select,
-        options: ["R", "M", "W"],
-        action: ADDITION_EFFECT.non,
-      },
-      {
-        name: "Large",
-        defaultValue: false,
-        value: false,
-        component: ADDITION_TYPE.checkbox,
-        amount: 1,
-        action: ADDITION_EFFECT.addToPrice,
+        name: "Size",
+        defaultValue: "Small",
+        value: "Small",
+        component: MOD_COMPONENT.select,
+        options: ["Small", "Large"],
+        type: MODE_TYPE.non,
+        required: true,
       },
     ],
   },
@@ -188,14 +181,13 @@ export const ITEMS = [
     price: 2.5,
     totalPrice: 2.5,
     qty: 1,
-    additions: [],
-    possibleAdditions: [
+    mods: [
       {
         name: "No ice",
         defaultValue: false,
         value: false,
-        component: ADDITION_TYPE.checkbox,
-        action: ADDITION_EFFECT.subtractFromPrice,
+        component: MOD_COMPONENT.checkbox,
+        type: MODE_TYPE.subtractFromPrice,
         amount: 1,
       },
     ],
@@ -209,8 +201,7 @@ export const ITEMS = [
     price: 12.5,
     totalPrice: 12.5,
     qty: 1,
-    additions: [],
-    possibleAdditions: [],
+    mods: [],
     message: "",
   },
   {
@@ -222,8 +213,7 @@ export const ITEMS = [
     price: 12.5,
     totalPrice: 12.5,
     qty: 1,
-    additions: [],
-    possibleAdditions: [],
+    mods: [],
     message: "",
   },
   {
@@ -235,8 +225,7 @@ export const ITEMS = [
     price: 6.5,
     totalPrice: 6.5,
     qty: 1,
-    additions: [],
-    possibleAdditions: [],
+    mods: [],
     message: "",
   },
   {
@@ -248,8 +237,7 @@ export const ITEMS = [
     price: 8.5,
     totalPrice: 8.5,
     qty: 1,
-    additions: [],
-    possibleAdditions: [],
+    mods: [],
     message: "",
   },
   {
@@ -261,8 +249,7 @@ export const ITEMS = [
     price: 10,
     totalPrice: 10,
     qty: 1,
-    additions: [],
-    possibleAdditions: [],
+    mods: [],
     message: "",
   },
   {
@@ -273,15 +260,15 @@ export const ITEMS = [
     price: 24.5,
     totalPrice: 24.5,
     qty: 1,
-    additions: [],
-    possibleAdditions: [
+    mods: [
       {
         name: "Meat",
         defaultValue: "Medium",
         value: "Medium",
-        component: ADDITION_TYPE.select,
+        component: MOD_COMPONENT.select,
         options: ["Rare", "Medium-rare", "Medium", "Medium-well", "Well-done"],
-        action: ADDITION_EFFECT.non,
+        type: MODE_TYPE.non,
+        required: true,
       },
     ],
     message: "",
@@ -294,15 +281,15 @@ export const ITEMS = [
     price: 26.5,
     totalPrice: 26.5,
     qty: 1,
-    additions: [],
-    possibleAdditions: [
+    mods: [
       {
         name: "Meat",
         defaultValue: "Medium",
         value: "Medium",
-        component: ADDITION_TYPE.select,
+        component: MOD_COMPONENT.select,
         options: ["Rare", "Medium-rare", "Medium", "Medium-well", "Well-done"],
-        action: ADDITION_EFFECT.non,
+        type: MODE_TYPE.non,
+        required: true,
       },
     ],
     message: "",
@@ -311,22 +298,22 @@ export const ITEMS = [
 
 export const ITEM_GROUPS = [
   {
-    id: "CART_GROUP_1",
+    _id: "CART_GROUP_1",
     name: "Starters",
     filterFunc: (item) => item.type === ITEM_TYPE.food && item.starter,
   },
   {
-    id: "CART_GROUP_2",
+    _id: "CART_GROUP_2",
     name: "Mains",
     filterFunc: (item) => item.type === ITEM_TYPE.food && !item.starter,
   },
   {
-    id: "CART_GROUP_3",
+    _id: "CART_GROUP_3",
     name: "Desserts",
     filterFunc: (item) => item.type === ITEM_TYPE.dessert,
   },
   {
-    id: "CART_GROUP_4",
+    _id: "CART_GROUP_4",
     name: "Drinks",
     filterFunc: (item) => item.type === ITEM_TYPE.drink,
   },

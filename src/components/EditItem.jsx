@@ -1,12 +1,5 @@
-import {
-  EURO_SYMBOL,
-  deepClone,
-  ITEM_TYPE,
-  classes,
-  ADDITION_TYPE,
-  ADDITION_EFFECT,
-} from "../utils";
-import { useEffect, useState } from "react";
+import { EURO_SYMBOL, ITEM_TYPE, MOD_COMPONENT, MODE_TYPE } from "../utils";
+import { useState } from "react";
 import { ICON_CHECK, ICON_TRASH, ICON_X_MARK } from "../utils/icons";
 
 export default function EditItem({
@@ -18,7 +11,7 @@ export default function EditItem({
   const [qty, setQty] = useState(item.qty);
   const [price, setPrice] = useState(item.price);
   const [message, setMessage] = useState(item.message);
-  const [additions, setAdditions] = useState(item.additions);
+  const [mods, setMods] = useState(item.mods);
   const [starter, setStarter] = useState(item.starter || false);
   const increment = () => setQty(qty + 1);
   const decrement = () => qty > 1 && setQty(qty - 1);
@@ -35,13 +28,13 @@ export default function EditItem({
       price,
       starter,
       message,
-      additions,
+      mods,
     };
-    editedItem.totalPrice = editedItem.additions.reduce((total, addition) => {
-      if (addition.action === ADDITION_EFFECT.addToPrice) {
+    editedItem.totalPrice = editedItem.mods.reduce((total, addition) => {
+      if (addition.action === MODE_TYPE.addToPrice) {
         return total + addition.amount;
       }
-      if (addition.action === ADDITION_EFFECT.subtractFromPrice) {
+      if (addition.action === MODE_TYPE.subtractFromPrice) {
         return total - addition.amount;
       }
       return total;
@@ -50,30 +43,8 @@ export default function EditItem({
     cancelEdit();
   };
 
-  const removeAddition = (addition) =>
-    setAdditions(additions.filter((a) => a.name !== addition.name));
-  const additionsHad = (name) => additions.some((a) => a.name === name);
-  const updateAddition = (addition) =>
-    setAdditions(
-      additions.map((a) => (a.name !== addition.name ? a : addition))
-    );
-  const additionAdd = (addition) => setAdditions([...additions, addition]);
-
-  const onInputChange = (addition) => {
-    // delete
-    if (addition.value === addition.defaultValue)
-      return removeAddition(addition);
-    //  update
-    if (additionsHad(addition.name)) return updateAddition(addition);
-    // add
-    additionAdd(addition);
-  };
-
-  const allAdditions = item.possibleAdditions.map(
-    (additionA) =>
-      additions.find((additionB) => additionA.name === additionB.name) ||
-      additionA
-  );
+  const onInputChange = (mod) =>
+    setMods(mods.map((a) => (a.name !== mod.name ? a : mod)));
 
   return (
     <div className="flex flex-col gap-2 grow">
@@ -99,9 +70,9 @@ export default function EditItem({
       )}
 
       <div className="flex gap-1 flex-col">
-        {allAdditions.map((addition, index) => {
+        {item.mods.map((addition, index) => {
           // checkbox
-          if (addition.component === ADDITION_TYPE.checkbox)
+          if (addition.component === MOD_COMPONENT.checkbox)
             return (
               <div className="form-control" key={item._id + addition.name}>
                 <label className="label cursor-pointer">
@@ -120,7 +91,7 @@ export default function EditItem({
             );
 
           // select
-          if (addition.component === ADDITION_TYPE.select)
+          if (addition.component === MOD_COMPONENT.select)
             return (
               <select
                 key={item._id + addition.name}

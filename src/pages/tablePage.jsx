@@ -71,6 +71,7 @@ export default function TablePage() {
           </div>
           {/* table cart */}
           <Cart
+            table={table}
             cartItems={cartItems}
             isSelectedItem={isSelectedItem}
             setSelectedItem={selectItem}

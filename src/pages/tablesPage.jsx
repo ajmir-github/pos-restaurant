@@ -68,7 +68,8 @@ export default function TablesPage() {
                   [TABLE_STATUS.closing]: "btn-warning",
                   [TABLE_STATUS.break]: "btn-accent",
                 }),
-                table.starter && " border-b-error border-b-4"
+                table.stats.hasStarters && " border-r-warning border-r-2",
+                table.stats.hasMains && " border-l-error border-l-2"
               )}
               key={table.tableNumber}
             >
