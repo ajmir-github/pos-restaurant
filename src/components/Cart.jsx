@@ -4,6 +4,7 @@ import {
   ITEM_GROUPS,
   ADDITION_TYPE,
   ADDITION_EFFECT,
+  ITEM_TYPE,
 } from "../utils";
 import {
   ICON_EDIT,
@@ -142,18 +143,79 @@ export default function Cart({
         </div>
       </div>
 
-      {cartItems.some((item) => !item.sent) &&
-        (cartItems.some((item) => item.starter && !item.sent) ? (
-          <div className="btn grow btn-info" onClick={() => sendCart(false)}>
-            {ICON_SEND}
-            Send Starter
-          </div>
-        ) : (
-          <div className="btn grow btn-success" onClick={() => sendCart(true)}>
-            {ICON_SEND}
-            Send Mains
-          </div>
-        ))}
+      {cartItems.some((item) => !item.sent) && (
+        <div className="flex flex-col gap-2">
+          {cartItems.some(
+            (item) => ITEM_TYPE.drink === item.type && !item.sent
+          ) && (
+            <div
+              className="btn grow btn-secondary"
+              onClick={() =>
+                sendCart(
+                  (item) =>
+                    [ITEM_TYPE.dessert, ITEM_TYPE.drink].includes(item.type) &&
+                    !item.sent
+                )
+              }
+            >
+              {ICON_SEND}
+              Drinks
+            </div>
+          )}
+          {cartItems.some(
+            (item) => ITEM_TYPE.dessert === item.type && !item.sent
+          ) && (
+            <div
+              className="btn grow btn-secondary"
+              onClick={() =>
+                sendCart(
+                  (item) =>
+                    [ITEM_TYPE.dessert, ITEM_TYPE.drink].includes(item.type) &&
+                    !item.sent
+                )
+              }
+            >
+              {ICON_SEND}
+              Desserts
+            </div>
+          )}
+
+          {cartItems.some(
+            (item) => item.type === ITEM_TYPE.food && item.starter && !item.sent
+          ) && (
+            <div
+              className="btn grow btn-info"
+              onClick={() =>
+                sendCart(
+                  (item) =>
+                    item.type === ITEM_TYPE.food && item.starter && !item.sent
+                )
+              }
+            >
+              {ICON_SEND}
+              Starter
+            </div>
+          )}
+
+          {cartItems.some(
+            (item) =>
+              item.type === ITEM_TYPE.food && !item.starter && !item.sent
+          ) && (
+            <div
+              className="btn grow btn-success"
+              onClick={() =>
+                sendCart(
+                  (item) =>
+                    item.type === ITEM_TYPE.food && !item.starter && !item.sent
+                )
+              }
+            >
+              {ICON_SEND}
+              Mains
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

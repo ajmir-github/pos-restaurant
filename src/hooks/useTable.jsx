@@ -87,16 +87,12 @@ export default function useTable() {
       cartItems: cartItems.filter((itemB) => itemB._id !== itemA._id),
     });
 
-  const sendCart = (mains) => {
+  const sendCart = (compareFunc) => {
     let unsentItems = [];
     const addItem = (item) => unsentItems.push({ ...item, sent: true });
     table.cartItems.forEach((item) => {
       if (item.sent) return;
-      // if not food
-      if (item.type !== ITEM_TYPE.food) return addItem(item);
-      // if food
-      if (!mains && item.starter) return addItem(item);
-      if (mains && !item.starter) return addItem(item);
+      if (compareFunc(item)) addItem(item);
     });
 
     let newItems = table.cartItems.map(
