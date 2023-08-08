@@ -11,12 +11,13 @@ export default function PrintReceiptPage() {
   );
   useEffect(() => {
     window.print();
-    navigate("/table/" + tableNumber);
   }, []);
-
   return (
-    <div className="flex flex-col p-5">
-      <div className="font-bold text-center">
+    <div
+      className="flex flex-col p-5 bg-white text-black w-full h-screen"
+      onClick={() => navigate("/table/" + tableNumber)}
+    >
+      <div className="font-bold text-center" print="yes">
         Oscar Restaurant
         <br />
         Protaras, Cyprus
@@ -29,9 +30,9 @@ export default function PrintReceiptPage() {
           {/* head */}
           <thead>
             <tr>
-              <th>item</th>
-              <th>Qty</th>
-              <th>Price</th>
+              <th className="text-black ">item</th>
+              <th className="text-black ">Qty</th>
+              <th className="text-black ">Price</th>
             </tr>
           </thead>
           <tbody>
