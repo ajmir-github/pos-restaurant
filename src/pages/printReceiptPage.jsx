@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import useTable from "../hooks/useTable";
 import { EURO_SYMBOL, ITEM_GROUPS, classes } from "../utils";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import QRCode from "react-qr-code";
 export default function PrintReceiptPage() {
   const navigate = useNavigate();
   const { tableNumber, table, cartItems } = useTable();
@@ -14,8 +15,8 @@ export default function PrintReceiptPage() {
   }, []);
   return (
     <div
-      className="flex flex-col p-5 bg-white text-black w-full h-screen"
-      onClick={() => navigate("/table/" + tableNumber)}
+      className="flex flex-col p-5 bg-white text-black w-full min-h-screen"
+      onDoubleClick={() => navigate("/table/" + tableNumber)}
     >
       <div className="font-bold text-center" print="yes">
         Oscar Restaurant
@@ -55,7 +56,12 @@ export default function PrintReceiptPage() {
       <div className="font-bold">
         Total: {EURO_SYMBOL} {total}
       </div>
-      <div className="">LEGAL DOCUMENT: {table._id}</div>
+      <div className="">
+        Scan the barcode to receive the check online: {table._id}
+      </div>
+      <div className=" p-5 bg-white">
+        <QRCode value="https://www.afghancodecamp.tk/" size={256} />
+      </div>
     </div>
   );
 }
