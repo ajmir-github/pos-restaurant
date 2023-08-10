@@ -1,7 +1,10 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Layout from "../components/Layout";
 import { useDispatch, useSelector } from "react-redux";
 import { themeActions } from "../state";
+import { useEffect } from "react";
+import { getCurrentUser, signOut, useAuth } from "../firebase";
+import TopPanel from "../components/TopPanel";
 
 const THEMES = [
   "light",
@@ -37,42 +40,81 @@ const THEMES = [
 
 export default function HomePage() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { signed, user } = useAuth();
+
+  const signOutUser = () => {
+    signOut().then(() => {
+      navigate("/login");
+    });
+  };
+
   const theme = useSelector((state) => state.theme);
   return (
     <Layout>
-      home page
-      <Link className="btn btn-primary" to={"/tables"}>
-        Tables
-      </Link>
-      <Link className="btn btn-secondary" to={"/kitchen"}>
-        Kitchen
-      </Link>
-      <Link className="btn btn-success" to={"/bar"}>
-        Bar
-      </Link>
-      <button
-        className="btn btn-ghost"
-        onClick={() => dispatch({ type: themeActions.turnDarkTheme })}
-      >
-        Dark theme
-      </button>
-      <button
-        className="btn btn-ghost"
-        onClick={() => dispatch({ type: themeActions.turnLightTheme })}
-      >
-        Light theme
-      </button>
-      <select
-        className="select select-bordered w-full"
-        value={theme}
-        onChange={(e) =>
-          dispatch({ type: themeActions.chooseTheme, payload: e.target.value })
+      <TopPanel
+        replaceButtonWith={
+          <button className="btn btn-info" onClick={signOutUser}>
+            Sign out
+          </button>
         }
       >
-        {THEMES.map((theme) => (
-          <option key={theme}>{theme}</option>
-        ))}
-      </select>
+        {signed && (user.displayName || user.email)}
+      </TopPanel>
+
+      <div className="flex flex-col gap-8 items-center">
+        <div className="w-full flex justify-end">
+          <div className="join">
+            <button
+              className="join-item btn btn-primary"
+              onClick={() => dispatch({ type: themeActions.turnDarkTheme })}
+            >
+              Dark
+            </button>
+            <button
+              className="join-item btn btn-secondary"
+              onClick={() => dispatch({ type: themeActions.turnLightTheme })}
+            >
+              Light
+            </button>
+            <select
+              className="join-item select select-bordered select-primary"
+              value={theme}
+              onChange={(e) =>
+                dispatch({
+                  type: themeActions.chooseTheme,
+                  payload: e.target.value,
+                })
+              }
+            >
+              {THEMES.map((theme) => (
+                <option key={theme}>{theme}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <div className="join join-vertical">
+          <Link
+            className="join-item grow btn-outline btn btn-lg btn-primary"
+            to={"/tables"}
+          >
+            Tables
+          </Link>
+          <Link
+            className="join-item grow btn-outline btn btn-lg btn-secondary"
+            to={"/kitchen"}
+          >
+            Kitchen
+          </Link>
+          <Link
+            className="join-item grow btn-outline btn btn-lg btn-success"
+            to={"/bar"}
+          >
+            Bar
+          </Link>
+        </div>
+      </div>
     </Layout>
   );
 }

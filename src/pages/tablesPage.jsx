@@ -68,8 +68,8 @@ export default function TablesPage() {
                   [TABLE_STATUS.closing]: "btn-warning",
                   [TABLE_STATUS.break]: "btn-accent",
                 }),
-                table.stats.hasStarters && " border-r-warning border-r-2",
-                table.stats.hasMains && " border-l-error border-l-2"
+                table.stats.hasStarters && " border-b-red-500 border-b-2",
+                table.stats.hasMains && " border-t-red-500 border-t-2"
               )}
               key={table.tableNumber}
             >
@@ -80,6 +80,20 @@ export default function TablesPage() {
               <span className="text-xs  absolute bottom-2 right-2">
                 {table.customers || ""}
               </span>
+              {/* <span className="text-xs  absolute bottom-1 left-1 flex flex-col gap-1 text-base-100">
+                {table.stats.hasStarters && (
+                  <span className="badge bg-red-500 badge-xs p-0 w-2 h-2 md:w-3 md:h-3 border-gray-500"></span>
+                )}
+                {table.stats.hasMains && (
+                  <span className="badge bg-orange-500 badge-xs p-0 w-2 h-2 md:w-3 md:h-3 border-gray-500"></span>
+                )}
+                {table.stats.hasDrinks && (
+                  <span className="badge bg-green-500 badge-xs p-0 w-2 h-2 md:w-3 md:h-3 border-gray-500"></span>
+                )}
+                {table.stats.hasDesserts && (
+                  <span className="badge bg-pink-500 badge-xs p-0 w-2 h-2 md:w-3 md:h-3 border-gray-500"></span>
+                )}
+              </span> */}
             </Link>
           );
         })}

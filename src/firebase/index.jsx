@@ -1,5 +1,18 @@
-import { database } from "./config";
+import {
+  createUserWithEmailAndPassword,
+  deleteUser,
+  onAuthStateChanged,
+  sendEmailVerification,
+  sendPasswordResetEmail,
+  signInWithEmailAndPassword,
+  updateEmail,
+  updatePassword,
+  updateProfile,
+} from "firebase/auth";
+import { auth, database } from "./config";
 import { doc, setDoc, collection, onSnapshot } from "firebase/firestore";
+import { useState } from "react";
+import { useEffect } from "react";
 
 const tableCollectionName = "Tables";
 const orderCollectionName = "Orders";
@@ -59,4 +72,79 @@ export async function addOrder(order) {
 export async function setOrder(order) {
   await setDoc(doc(database, orderCollectionName, order._id), order);
   console.log("Order is set!");
+}
+
+export function createUser(email, password) {
+  return createUserWithEmailAndPassword(auth, email, password);
+}
+
+export function signUser(email, password) {
+  return signInWithEmailAndPassword(auth, email, password);
+}
+
+export function signOut() {
+  return auth.signOut();
+}
+
+export function getCurrentUser() {
+  return auth.currentUser;
+}
+
+export function getUserData(user) {
+  const uid = user.uid;
+  const displayName = user.displayName;
+  const email = user.email;
+  const photoURL = user.photoURL;
+  const emailVerified = user.emailVerified;
+  return {
+    uid,
+    displayName,
+    email,
+    photoURL,
+    emailVerified,
+  };
+}
+
+export function updateUser(user) {
+  return updateProfile(auth.currentUser, user);
+}
+
+export function updateUserEmail(email) {
+  return updateEmail(auth.currentUser, email);
+}
+
+export function verifyUserEmail() {
+  return sendEmailVerification(auth.currentUser);
+}
+
+export function updateUserPassword(newPassword) {
+  return updatePassword(user, newPassword);
+}
+
+export function resetUserPassword(email) {
+  return sendPasswordResetEmail(auth, email);
+}
+
+export function removeUser() {
+  return deleteUser(auth.currentUser);
+}
+
+export function useAuth() {
+  const [signed, setSigned] = useState(false);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, (user) => {
+      setSigned(user && true);
+
+      setUser(user && getUserData(user));
+      if (loading) setLoading(false);
+    });
+    return () => unsub();
+  }, []);
+  return {
+    loading,
+    signed,
+    user,
+  };
 }
