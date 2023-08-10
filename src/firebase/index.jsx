@@ -10,14 +10,22 @@ import {
   updateProfile,
 } from "firebase/auth";
 import { auth, database } from "./config";
-import { doc, setDoc, collection, onSnapshot } from "firebase/firestore";
+import {
+  doc,
+  setDoc,
+  collection,
+  onSnapshot,
+  getDoc,
+} from "firebase/firestore";
 import { useState } from "react";
 import { useEffect } from "react";
 
 const tableCollectionName = "Tables";
 const orderCollectionName = "Orders";
+const userCollectionName = "Users";
 export const tablesRef = collection(database, tableCollectionName);
 export const orderRef = collection(database, orderCollectionName);
+export const userRef = collection(database, userCollectionName);
 
 export const setTable = async (table) => {
   const tableId = table.tableNumber.toString();
@@ -105,6 +113,12 @@ export function getUserData(user) {
   };
 }
 
+export async function getUserByUID(uid) {
+  const docRef = doc(database, userCollectionName, uid);
+  const docSnap = await getDoc(docRef);
+  return normalizeFirebaseDoc(docSnap);
+}
+
 export function updateUser(user) {
   return updateProfile(auth.currentUser, user);
 }
@@ -134,11 +148,20 @@ export function useAuth() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (user) => {
-      setSigned(user && true);
-
-      setUser(user && getUserData(user));
-      if (loading) setLoading(false);
+    const unsub = onAuthStateChanged(auth, async (user) => {
+      setLoading(true);
+      if (!user) {
+        setSigned(false);
+        return setLoading(false);
+      }
+      const userData = getUserData(user);
+      const restOfUserData = await getUserByUID(user.uid);
+      setUser({
+        ...userData,
+        ...restOfUserData,
+      });
+      setSigned(true);
+      setLoading(false);
     });
     return () => unsub();
   }, []);
