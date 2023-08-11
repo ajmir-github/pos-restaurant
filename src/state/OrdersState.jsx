@@ -27,22 +27,32 @@ const OrdersReducer = (state, { type, payload }) => {
 
 export function OrdersProvider({ children, loadingComponent, filterOrders }) {
   const [state, dispatch] = useReducer(OrdersReducer, initialState);
-  const [tempOrders, setTempOrders] = useState([]);
+  // const [tempOrders, setTempOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      dispatch({ type: OrdersActions.feed, payload: tempOrders });
-    }, 1000);
-    return () => clearTimeout(timeout);
-  }, [tempOrders]);
+  // useEffect(() => {
+  //   const timeout = setTimeout(() => {
+  //     dispatch({ type: OrdersActions.feed, payload: tempOrders });
+  //   }, 1000);
+  //   return () => clearTimeout(timeout);
+  // }, [tempOrders]);
 
   useEffect(() => {
-    const unsub = trackChanges(orderRef, (order) => {
+    const unsub = trackChanges(orderRef, (orderA) => {
       if (loading) setLoading(false);
-      if (!filterOrders(order)) return;
-      if (tempOrders.some((orderB) => order._id === orderB._id)) return;
-      setTempOrders((orders) => [...orders, order]);
+      // if (!filterOrders(order)) return;
+      // if (!tempOrders.some((orderB) => order._id === orderB._id))
+      //   setTempOrders((orders) => [...orders, order]);
+      // tempOrders((orders) =>
+      //   orders.map((orderB) => (orderB._id === order._id ? order : orderB))
+      // );
+
+      dispatch({
+        type: OrdersActions.feed,
+        payload: state.some((orderB) => orderA._id === orderB._id)
+          ? state.map((orderB) => (orderA._id === orderB._id ? orderA : orderB))
+          : [...state, orderA],
+      });
     });
     return () => unsub();
   }, []);
