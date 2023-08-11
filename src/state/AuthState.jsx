@@ -1,7 +1,6 @@
 import {
   useReducer,
   createContext,
-  useEffect,
   useLayoutEffect,
   useState,
   useContext,
@@ -37,14 +36,17 @@ export function AuthProvider({ children, loadingComponent }) {
   const [state, dispatch] = useReducer(authReducer, initialState);
   const [loading, setLoading] = useState(true);
   useLayoutEffect(() => {
-    const unsub = trackAuth(({ signed, user }) => {
-      dispatch(
-        signed
-          ? { type: AuthActions.signIn, payload: user }
-          : { type: AuthActions.signOut }
-      );
-      if (loading) setLoading(false);
-    });
+    const unsub = trackAuth(
+      ({ signed, user }) => {
+        dispatch(
+          signed
+            ? { type: AuthActions.signIn, payload: user }
+            : { type: AuthActions.signOut }
+        );
+        if (loading) setLoading(false);
+      },
+      () => setLoading(true) // while loading
+    );
     return unsub;
   }, []);
 

@@ -129,9 +129,10 @@ export function removeUser() {
   return deleteUser(auth.currentUser);
 }
 
-export function trackAuth(onChange) {
+export function trackAuth(onChange, onStart = () => {}) {
   const unsub = onAuthStateChanged(auth, async (user) => {
     if (!user) return onChange({ signed: false, user: null });
+    onStart();
     const userData = getUserData(user);
     const restOfUserData = await getUserByUID(user.uid);
     onChange({
