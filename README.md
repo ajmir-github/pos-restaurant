@@ -12,3 +12,5 @@
 - user page
 - user role
 - admin
+- componenet optimizations
+- state optimititions

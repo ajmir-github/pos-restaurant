@@ -50,23 +50,9 @@ export const CHANGE_TYPES = {
 
 export function trackChanges(colRef, onChange) {
   const unsubscribe = onSnapshot(colRef, (querySnapshot) => {
-    // const tables = [];
-    // querySnapshot.forEach((doc) => {
-    //   tables.push(normalizeFirebaseDoc(doc));
-    // });
-    // onChange(tables);
-
-    querySnapshot.docChanges().forEach((change) => {
-      // if a doc added
-      if (change.type === CHANGE_TYPES.added)
-        return onChange(normalizeFirebaseDoc(change.doc));
-      // if a doc updated
-      if (change.type === CHANGE_TYPES.modified)
-        return onChange(normalizeFirebaseDoc(change.doc));
-      // if a doc removed
-      if (change.type === CHANGE_TYPES.removed)
-        return onChange(normalizeFirebaseDoc(change.doc));
-    });
+    querySnapshot
+      .docChanges()
+      .forEach((change) => onChange(normalizeFirebaseDoc(change.doc)));
   });
 
   return () => unsubscribe();
@@ -143,31 +129,18 @@ export function removeUser() {
   return deleteUser(auth.currentUser);
 }
 
-export function useAuth() {
-  const [signed, setSigned] = useState(false);
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  useEffect(() => {
-    const unsub = onAuthStateChanged(auth, async (user) => {
-      setLoading(true);
-      if (!user) {
-        setSigned(false);
-        return setLoading(false);
-      }
-      const userData = getUserData(user);
-      const restOfUserData = await getUserByUID(user.uid);
-      setUser({
+export function trackAuth(onChange) {
+  const unsub = onAuthStateChanged(auth, async (user) => {
+    if (!user) return onChange({ signed: false, user: null });
+    const userData = getUserData(user);
+    const restOfUserData = await getUserByUID(user.uid);
+    onChange({
+      signed: true,
+      user: {
         ...userData,
         ...restOfUserData,
-      });
-      setSigned(true);
-      setLoading(false);
+      },
     });
-    return () => unsub();
-  }, []);
-  return {
-    loading,
-    signed,
-    user,
-  };
+  });
+  return unsub;
 }

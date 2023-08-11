@@ -3,38 +3,34 @@ import HomePage from "./pages/homePage";
 import TabelsPage from "./pages/tablesPage";
 import TablePage from "./pages/tablePage";
 import { useEffect, useState } from "react";
-import { orderRef, tablesRef, trackChanges, useAuth } from "./firebase";
+import { orderRef, tablesRef, trackChanges } from "./firebase";
 import { useDispatch } from "react-redux";
-import { ordersActions, tablesActions } from "./state";
+import { tablesActions } from "./state";
 import KitchenPage from "./pages/kitchenPage";
-import PageLoading from "./components/PageLoading";
 import BarPage from "./pages/barPage";
 import PrintReceiptPage from "./pages/printReceiptPage";
 import LoginPage from "./pages/loginPage";
+import { useAuth } from "./state/AuthState";
 
 function App() {
   const dispatch = useDispatch();
-  const { loading, signed } = useAuth();
+  const [auth] = useAuth();
 
   useEffect(() => {
     const tableUnsubscribe = trackChanges(tablesRef, (table) => {
       dispatch({ type: tablesActions.updateTable, payload: table });
     });
-    const orderUnsubscribe = trackChanges(orderRef, (order) => {
-      dispatch({ type: ordersActions.updateOrder, payload: order });
-    });
-    return () => tableUnsubscribe() && orderUnsubscribe();
+
+    return () => tableUnsubscribe();
   }, []);
 
   const ProtectedRoute = ({ children }) =>
-    !signed ? <Navigate to="/login" replace /> : children;
+    !auth.signed ? <Navigate to="/login" replace /> : children;
 
   const UnprotectedRoute = ({ children }) =>
-    signed ? <Navigate to="/" replace /> : children;
+    auth.signed ? <Navigate to="/" replace /> : children;
 
-  return loading ? (
-    <PageLoading />
-  ) : (
+  return (
     <BrowserRouter>
       <Routes>
         <Route

@@ -3,8 +3,9 @@ import Layout from "../components/Layout";
 import { useDispatch, useSelector } from "react-redux";
 import { themeActions } from "../state";
 import { useEffect } from "react";
-import { getCurrentUser, signOut, useAuth } from "../firebase";
+import { getCurrentUser, signOut } from "../firebase";
 import TopPanel from "../components/TopPanel";
+import { useAuth } from "../state/AuthState";
 
 const THEMES = [
   "light",
@@ -41,7 +42,7 @@ const THEMES = [
 export default function HomePage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { signed, user } = useAuth();
+  const [auth, authDispatch] = useAuth();
 
   const signOutUser = () => {
     signOut().then(() => {
@@ -59,7 +60,7 @@ export default function HomePage() {
           </button>
         }
       >
-        {signed && (user.displayName || user.email)}
+        {auth.signed && (auth.user.displayName || auth.user.email)}
       </TopPanel>
 
       <div className="flex flex-col gap-8 items-center">

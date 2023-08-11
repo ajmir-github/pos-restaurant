@@ -2,6 +2,9 @@ import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 // Your web app's Firebase configuration
+
+// console.log(import.meta.env);
+
 const firebaseConfig = {
   apiKey: "AIzaSyCqv6PtOSXu26J3D69eCF5Ao66Vd0-weCA",
   authDomain: "pos-restaurant-453cb.firebaseapp.com",

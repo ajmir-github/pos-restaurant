@@ -3,16 +3,14 @@ import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import { Provider } from "react-redux";
 import { themeActions, themeReducer, initialTheme } from "./themeReducer";
 import { tablesActions, tablesReducer } from "./tablesReducer";
-import { ordersActions, ordersReducer } from "./ordersReducer";
 
 // Export Actions
-export { themeActions, initialTheme, tablesActions, ordersActions };
+export { themeActions, initialTheme, tablesActions };
 
 // Reducers
 const reducers = {
   theme: themeReducer,
   tables: tablesReducer,
-  orders: ordersReducer,
 };
 
 // Store
