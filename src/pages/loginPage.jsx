@@ -3,6 +3,7 @@ import { getCurrentUser, resetUserPassword, signUser } from "../firebase";
 import { classes } from "../utils";
 import { useNavigate } from "react-router-dom";
 import { ICON_ARROW_LEFT, ICON_ARROW_RIGHT } from "../utils/icons";
+import Layout from "../components/Layout";
 
 const TABS = {
   signIn: "SIGN_IN",
@@ -65,124 +66,126 @@ export default function Login() {
   };
 
   return (
-    <div className="w-full min-h-screen flex justify-center items-center">
-      <div className={loading ? "block" : "hidden"}>
-        <span className="loading loading-infinity loading-lg"></span>
+    <Layout>
+      <div className="w-full min-h-screen flex justify-center items-center p-2">
+        <div className={loading ? "block" : "hidden"}>
+          <span className="loading loading-infinity loading-lg"></span>
+        </div>
+
+        {tab === TABS.signIn && (
+          <form
+            className={
+              loading
+                ? "hidden"
+                : "flex grow flex-col items-center justify-center"
+            }
+            onSubmit={handleSignIn}
+          >
+            <div className="flex flex-col w-full max-w-md gap-2 bg-gray-500 bg-opacity-10 p-4 rounded-box">
+              <div className="form-control w-full">
+                <label className="label">
+                  <span className="label-text">Email</span>
+                </label>
+                <input
+                  className={classes(
+                    "input input-bordered w-full",
+                    alerts.field === "email" && "input-error"
+                  )}
+                  type="email"
+                  name="email"
+                  required
+                />
+                <label className="label">
+                  <span className="label-text-alt text-error">
+                    {alerts.field === "email" && alerts.message}
+                  </span>
+                </label>
+              </div>
+              <div className="form-control w-full">
+                <label className="label">
+                  <span className="label-text">Password</span>
+                </label>
+                <input
+                  type="password"
+                  name="password"
+                  className={classes(
+                    "input input-bordered w-full",
+                    alerts.field === "password" && "input-error"
+                  )}
+                  required
+                />
+                <label className="label">
+                  <span className="label-text-alt text-error">
+                    {alerts.field === "password" && alerts.message}
+                  </span>
+                </label>
+              </div>
+
+              <button className="btn w-full btn-primary" type="submit">
+                Sign in
+              </button>
+
+              <button
+                className="btn w-full btn-ghost text-start"
+                onClick={() => setTab(TABS.forgetPass)}
+              >
+                Forget password? {ICON_ARROW_RIGHT}
+              </button>
+            </div>
+          </form>
+        )}
+
+        {tab === TABS.forgetPass && (
+          <form
+            className={
+              loading
+                ? "hidden"
+                : "flex grow flex-col items-center justify-center"
+            }
+            onSubmit={handleForgotPassword}
+          >
+            <div className="flex flex-col w-full max-w-md gap-2 bg-gray-500 bg-opacity-10 p-4 rounded-box">
+              <div className="form-control w-full">
+                <label className="label">
+                  <span className="label-text">Email</span>
+                </label>
+                <input
+                  className={classes(
+                    "input input-bordered w-full",
+                    alerts.field === "email" && "input-error"
+                  )}
+                  type="email"
+                  name="email"
+                  required
+                />
+                <label className="label">
+                  <span className="label-text-alt text-error">
+                    {alerts.field === "email" && alerts.message}
+                  </span>
+                </label>
+              </div>
+
+              {toast && <div className="alert alert-info">{toast}</div>}
+
+              <button
+                className="btn w-full btn-primary"
+                type="submit"
+                disabled={toast}
+              >
+                Forget password?
+              </button>
+
+              <button
+                className="btn w-full btn-ghost text-start"
+                onClick={() => setTab(TABS.signIn)}
+              >
+                Sign in
+                {ICON_ARROW_LEFT}
+              </button>
+            </div>
+          </form>
+        )}
       </div>
-
-      {tab === TABS.signIn && (
-        <form
-          className={
-            loading
-              ? "hidden"
-              : "flex grow flex-col items-center justify-center"
-          }
-          onSubmit={handleSignIn}
-        >
-          <div className="flex flex-col w-full max-w-md gap-2 bg-gray-500 bg-opacity-10 p-4 rounded-box">
-            <div className="form-control w-full">
-              <label className="label">
-                <span className="label-text">Email</span>
-              </label>
-              <input
-                className={classes(
-                  "input input-bordered w-full",
-                  alerts.field === "email" && "input-error"
-                )}
-                type="email"
-                name="email"
-                required
-              />
-              <label className="label">
-                <span className="label-text-alt text-error">
-                  {alerts.field === "email" && alerts.message}
-                </span>
-              </label>
-            </div>
-            <div className="form-control w-full">
-              <label className="label">
-                <span className="label-text">Password</span>
-              </label>
-              <input
-                type="password"
-                name="password"
-                className={classes(
-                  "input input-bordered w-full",
-                  alerts.field === "password" && "input-error"
-                )}
-                required
-              />
-              <label className="label">
-                <span className="label-text-alt text-error">
-                  {alerts.field === "password" && alerts.message}
-                </span>
-              </label>
-            </div>
-
-            <button className="btn w-full btn-primary" type="submit">
-              Sign in
-            </button>
-
-            <button
-              className="btn w-full btn-ghost text-start"
-              onClick={() => setTab(TABS.forgetPass)}
-            >
-              Forget password? {ICON_ARROW_RIGHT}
-            </button>
-          </div>
-        </form>
-      )}
-
-      {tab === TABS.forgetPass && (
-        <form
-          className={
-            loading
-              ? "hidden"
-              : "flex grow flex-col items-center justify-center"
-          }
-          onSubmit={handleForgotPassword}
-        >
-          <div className="flex flex-col w-full max-w-md gap-2 bg-gray-500 bg-opacity-10 p-4 rounded-box">
-            <div className="form-control w-full">
-              <label className="label">
-                <span className="label-text">Email</span>
-              </label>
-              <input
-                className={classes(
-                  "input input-bordered w-full",
-                  alerts.field === "email" && "input-error"
-                )}
-                type="email"
-                name="email"
-                required
-              />
-              <label className="label">
-                <span className="label-text-alt text-error">
-                  {alerts.field === "email" && alerts.message}
-                </span>
-              </label>
-            </div>
-
-            {toast && <div className="alert alert-info">{toast}</div>}
-
-            <button
-              className="btn w-full btn-primary"
-              type="submit"
-              disabled={toast}
-            >
-              Forget password?
-            </button>
-
-            <button
-              className="btn w-full btn-ghost text-start"
-              onClick={() => setTab(TABS.signIn)}
-            >
-              Sign in
-              {ICON_ARROW_LEFT}
-            </button>
-          </div>
-        </form>
-      )}
-    </div>
+    </Layout>
   );
 }

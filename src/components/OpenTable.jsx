@@ -11,10 +11,10 @@ export default function OpenTable({ openTable }) {
   };
   return (
     <form
-      className="flex grow flex-col items-center justify-center"
+      className="flex grow flex-col items-center justify-center p-2"
       onSubmit={handleSubmit}
     >
-      <div className="flex flex-col w-full max-w-sm gap-4 bg-gray-500 bg-opacity-10 p-4 rounded-box">
+      <div className="flex flex-col w-full max-w-md gap-4 bg-gray-500 bg-opacity-10 p-4 rounded-box">
         <div className="w-full">
           <div className="opacity-60">Customer's Name</div>
           <div className="flex join">

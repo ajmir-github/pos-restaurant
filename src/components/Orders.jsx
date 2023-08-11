@@ -148,7 +148,7 @@ export default function Orders({ orders, filterItems }) {
             key={index}
             onClick={() => setFilterOption(FILTER_OPTIONS[key])}
             className={classes(
-              "tab grow",
+              "tab grow font-bold",
               filterOption === FILTER_OPTIONS[key] && "tab-active"
             )}
           >
