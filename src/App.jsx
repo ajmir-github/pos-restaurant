@@ -3,25 +3,61 @@ import HomePage from "./pages/homePage";
 import TabelsPage from "./pages/tablesPage";
 import TablePage from "./pages/tablePage";
 import { useEffect, useState } from "react";
-import { orderRef, tablesRef, trackChanges } from "./firebase";
-import { useDispatch } from "react-redux";
-import { tablesActions } from "./state";
+import { orderRef, tablesRef, trackAuth, trackChanges } from "./firebase";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  AuthActions,
+  barActions,
+  kitchenActions,
+  tablesActions,
+} from "./state";
 import KitchenPage from "./pages/kitchenPage";
 import BarPage from "./pages/barPage";
 import PrintReceiptPage from "./pages/printReceiptPage";
 import LoginPage from "./pages/loginPage";
-import { useAuth } from "./state/AuthState";
+import AdminPage from "./pages/adminPage";
+import PageLoading from "./components/PageLoading";
+import { ITEM_TYPE } from "./utils";
 
 function App() {
   const dispatch = useDispatch();
-  const [auth] = useAuth();
-
+  const auth = useSelector((state) => state.auth);
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
-    const tableUnsubscribe = trackChanges(tablesRef, (table) => {
+    const unsubAuth = trackAuth(
+      ({ signed, user }) => {
+        dispatch(
+          signed
+            ? { type: AuthActions.signIn, payload: user }
+            : { type: AuthActions.signOut }
+        );
+        if (loading) setLoading(false);
+      },
+      () => setLoading(true) // while loading
+    );
+
+    const unsubTables = trackChanges(tablesRef, (table) => {
       dispatch({ type: tablesActions.updateTable, payload: table });
     });
+    const unsubOrders = trackChanges(orderRef, (order) => {
+      // if food to kitchen
+      if (order.types.includes(ITEM_TYPE.food)) {
+        return dispatch({ type: kitchenActions.feed, payload: order });
+      }
 
-    return () => tableUnsubscribe();
+      if (
+        order.types.includes(ITEM_TYPE.drink) ||
+        order.types.includes(ITEM_TYPE.dessert)
+      ) {
+        return dispatch({ type: barActions.feed, payload: order });
+      }
+    });
+
+    return () => {
+      unsubAuth();
+      unsubTables();
+      unsubOrders();
+    };
   }, []);
 
   const ProtectedRoute = ({ children }) =>
@@ -30,7 +66,9 @@ function App() {
   const UnprotectedRoute = ({ children }) =>
     auth.signed ? <Navigate to="/" replace /> : children;
 
-  return (
+  return loading ? (
+    <PageLoading />
+  ) : (
     <BrowserRouter>
       <Routes>
         <Route
@@ -86,6 +124,14 @@ function App() {
           element={
             <ProtectedRoute>
               <PrintReceiptPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute>
+              <AdminPage />
             </ProtectedRoute>
           }
         />

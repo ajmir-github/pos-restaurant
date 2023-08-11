@@ -11,7 +11,6 @@ import { useEffect, useState } from "react";
 import { setOrder } from "../firebase";
 import dayjs from "dayjs";
 import { ICON_STACK } from "../utils/icons";
-import { useOrders } from "../state/OrdersState";
 
 function Order({ order, filterItems }) {
   const changeOrderStatus = (status) => {
@@ -105,8 +104,7 @@ function Order({ order, filterItems }) {
   );
 }
 
-export default function Orders({ filterItems }) {
-  const [orders] = useOrders();
+export default function Orders({ orders, filterItems }) {
   const FILTER_OPTIONS = {
     all: "All",
     waitingAndReady: "Waiting and Ready",

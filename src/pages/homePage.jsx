@@ -5,7 +5,6 @@ import { themeActions } from "../state";
 import { useEffect } from "react";
 import { getCurrentUser, signOut } from "../firebase";
 import TopPanel from "../components/TopPanel";
-import { useAuth } from "../state/AuthState";
 
 const THEMES = [
   "light",
@@ -42,7 +41,7 @@ const THEMES = [
 export default function HomePage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [auth, authDispatch] = useAuth();
+  const auth = useSelector((state) => state.auth);
 
   const signOutUser = () => {
     signOut().then(() => {
@@ -113,6 +112,12 @@ export default function HomePage() {
             to={"/bar"}
           >
             Bar
+          </Link>
+          <Link
+            className="join-item grow btn-outline btn btn-lg btn-error"
+            to={"/admin"}
+          >
+            Admin
           </Link>
         </div>
       </div>
