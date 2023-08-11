@@ -1,13 +1,12 @@
 import {
   MOD_COMPONENT,
-  ITEM_TYPE,
   ORDER_STATUS,
   classes,
   conditionalComponents,
 } from "../utils";
 import Layout from "../components/Layout";
 import TopPanel from "../components/TopPanel";
-import useNotification from "../hooks/useNotification";
+// import useNotification from "../hooks/useNotification";
 import { useEffect, useState } from "react";
 import { setOrder } from "../firebase";
 import dayjs from "dayjs";
@@ -132,7 +131,7 @@ export default function Orders({ filterItems }) {
     [FILTER_OPTIONS.pinned]: (order) => order.status === ORDER_STATUS.pinned,
   };
 
-  const audio = useNotification(orders);
+  // const audio = useNotification(orders);
   const [filterOption, setFilterOption] = useState(
     FILTER_OPTIONS.waitingAndReady
   );
