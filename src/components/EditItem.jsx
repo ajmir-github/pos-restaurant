@@ -1,4 +1,4 @@
-import { EURO_SYMBOL, ITEM_TYPE, MOD_COMPONENT, MODE_TYPE } from "../utils";
+import { EURO_SYMBOL, ITEM_TYPE, MOD_COMPONENT, MOD_TYPE } from "../utils";
 import { useState } from "react";
 import { ICON_CHECK, ICON_TRASH, ICON_X_MARK } from "../utils/icons";
 
@@ -30,13 +30,14 @@ export default function EditItem({
       message,
       mods,
     };
-    editedItem.totalPrice = editedItem.mods.reduce((total, addition) => {
-      if (addition.action === MODE_TYPE.addToPrice) {
-        return total + addition.amount;
+    editedItem.totalPrice = editedItem.mods.reduce((total, mod) => {
+      if (mod.type === MOD_TYPE.addToPrice) {
+        return total + mod.amount;
       }
-      if (addition.action === MODE_TYPE.subtractFromPrice) {
-        return total - addition.amount;
+      if (mod.type === MOD_TYPE.subtractFromPrice) {
+        return total - mod.amount;
       }
+
       return total;
     }, editedItem.price);
     editItemFromCart(editedItem);
@@ -70,20 +71,19 @@ export default function EditItem({
       )}
 
       <div className="flex gap-1 flex-col">
-        {item.mods.map((addition, index) => {
+        {item.mods.map((mod, index) => {
           // checkbox
-          if (addition.component === MOD_COMPONENT.checkbox)
+          if (mod.component === MOD_COMPONENT.checkbox)
             return (
-              <div className="form-control" key={item._id + addition.name}>
+              <div className="form-control" key={item._id + mod.name}>
                 <label className="label cursor-pointer">
-                  <span className="label-text">{addition.name}</span>
+                  <span className="label-text">{mod.name}</span>
                   <input
                     type="checkbox"
-                    defaultChecked={addition.value || item.defaultValue}
-                    // checked={addition.value}
+                    defaultChecked={mod.value || item.defaultValue}
                     className="checkbox"
                     onChange={(e) =>
-                      onInputChange({ ...addition, value: e.target.checked })
+                      onInputChange({ ...mod, value: e.target.checked })
                     }
                   />
                 </label>
@@ -91,19 +91,24 @@ export default function EditItem({
             );
 
           // select
-          if (addition.component === MOD_COMPONENT.select)
+          if (mod.component === MOD_COMPONENT.select)
             return (
               <select
-                key={item._id + addition.name}
+                key={item._id + mod.name}
                 className="select select-bordered w-full"
-                defaultValue={addition.value || item.defaultValue}
+                defaultValue={mod.value || item.defaultValue}
                 onChange={(e) =>
-                  onInputChange({ ...addition, value: e.target.value })
+                  onInputChange({
+                    ...mod,
+                    ...mod.options.find(
+                      (option) => option.value === e.target.value
+                    ),
+                  })
                 }
               >
-                {addition.options.map((option, index) => (
-                  <option key={item.id + addition.name + index}>
-                    {option}
+                {mod.options.map((option, index) => (
+                  <option key={item.id + mod.name + index}>
+                    {option.value}
                   </option>
                 ))}
               </select>

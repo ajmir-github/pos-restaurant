@@ -3,7 +3,7 @@ import {
   classes,
   ITEM_GROUPS,
   MOD_COMPONENT,
-  MODE_TYPE,
+  MOD_TYPE,
   ITEM_TYPE,
 } from "../utils";
 import {
@@ -103,29 +103,28 @@ export default function Cart({
                                 (mod) =>
                                   mod.required || mod.defaultValue !== mod.value
                               )
-                              .map((mode, index) => (
+                              .map((mod, index) => (
                                 <div
                                   key={item._id + ":CART_MODS_INDEX:" + index}
                                   className="flex gap-2 items-center"
                                 >
                                   <span>
-                                    {mode.component === MOD_COMPONENT.select
-                                      ? mode.value
-                                      : mode.name}
+                                    {mod.component === MOD_COMPONENT.select
+                                      ? mod.value
+                                      : mod.name}
                                   </span>
-                                  {mode.action === MODE_TYPE.addToPrice && (
+                                  {mod.type === MOD_TYPE.addToPrice && (
                                     <span className="badge badge-sm  badge-outline badge-info">
                                       {EURO_SYMBOL}
                                       {item.price}+{EURO_SYMBOL}
-                                      {mode.amount}
+                                      {mod.amount}
                                     </span>
                                   )}
-                                  {mode.action ===
-                                    MODE_TYPE.subtractFromPrice && (
+                                  {mod.type === MOD_TYPE.subtractFromPrice && (
                                     <span className="badge badge-sm  badge-outline badge-info">
                                       {EURO_SYMBOL}
                                       {item.price}-{EURO_SYMBOL}
-                                      {mode.amount}
+                                      {mod.amount}
                                     </span>
                                   )}
                                 </div>

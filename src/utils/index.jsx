@@ -67,6 +67,7 @@ export const ITEM_TYPE = {
   drink: "Drink",
   dessert: "dessert",
 };
+export const ITEM_TYPES = ["Food", "Drink", "dessert"];
 
 export const MOD_COMPONENT = {
   checkbox: "checkbox",
@@ -75,7 +76,7 @@ export const MOD_COMPONENT = {
   textInput: "textInput",
 };
 
-export const MODE_TYPE = {
+export const MOD_TYPE = {
   addToPrice: "ADD_TO_PRICE",
   subtractFromPrice: "SUBTRACT_FROM_PRICE",
   non: "NON",
@@ -107,6 +108,7 @@ export const ORDER_STATUS = {
 
 export const ITEMS = [
   {
+    _id: "a",
     name: "Lava Cake",
     type: ITEM_TYPE.dessert,
     category: "Desserts",
@@ -118,7 +120,39 @@ export const ITEMS = [
     mods: [],
     message: "",
   },
+
   {
+    _id: "b",
+    name: "Gin",
+    type: ITEM_TYPE.drink,
+    category: "Apperitives",
+    color: "btn-secondary",
+    price: 5,
+    totalPrice: 5,
+    qty: 1,
+
+    mods: [
+      {
+        name: "Mixer",
+        defaultValue: "Non",
+        value: "Non",
+        component: MOD_COMPONENT.select,
+        options: [
+          { value: "Non", type: MOD_TYPE.non },
+          { value: "Tonic", type: MOD_TYPE.addToPrice, amount: 1 },
+          { value: "Coke", type: MOD_TYPE.addToPrice, amount: 2 },
+          { value: "Limonade", type: MOD_TYPE.addToPrice, amount: 2 },
+          { value: "Coke Zero", type: MOD_TYPE.addToPrice, amount: 2 },
+          { value: "Limonade Zero", type: MOD_TYPE.addToPrice, amount: 2 },
+        ],
+        type: MOD_TYPE.non,
+        required: true,
+      },
+    ],
+    message: "",
+  },
+  {
+    _id: "c",
     name: "Cheese Cake",
     type: ITEM_TYPE.dessert,
 
@@ -132,6 +166,8 @@ export const ITEMS = [
     message: "",
   },
   {
+    _id: "d",
+
     name: "Freshstrawberries",
     type: ITEM_TYPE.dessert,
 
@@ -145,6 +181,8 @@ export const ITEMS = [
     message: "",
   },
   {
+    _id: "e",
+
     name: "Cola",
     type: ITEM_TYPE.drink,
 
@@ -160,20 +198,25 @@ export const ITEMS = [
         defaultValue: false,
         value: false,
         component: MOD_COMPONENT.checkbox,
-        type: MODE_TYPE.non,
+        type: MOD_TYPE.non,
       },
       {
         name: "Size",
         defaultValue: "Small",
         value: "Small",
         component: MOD_COMPONENT.select,
-        options: ["Small", "Large"],
-        type: MODE_TYPE.non,
+        options: [
+          { value: "Small", type: MOD_TYPE.non },
+          { value: "Large", type: MOD_TYPE.addToPrice, amount: 2 },
+        ],
+        type: MOD_TYPE.non,
         required: true,
       },
     ],
   },
   {
+    _id: "f",
+
     name: "Cola Zero",
     type: ITEM_TYPE.drink,
     category: "Soft Drinks",
@@ -187,13 +230,15 @@ export const ITEMS = [
         defaultValue: false,
         value: false,
         component: MOD_COMPONENT.checkbox,
-        type: MODE_TYPE.subtractFromPrice,
+        type: MOD_TYPE.subtractFromPrice,
         amount: 1,
       },
     ],
     message: "",
   },
   {
+    _id: "g",
+
     name: "Speggitte Carbonara",
     type: ITEM_TYPE.food,
     category: "Pasta",
@@ -205,6 +250,8 @@ export const ITEMS = [
     message: "",
   },
   {
+    _id: "h",
+
     name: "Halumi",
     type: ITEM_TYPE.food,
     category: "Starters",
@@ -217,6 +264,8 @@ export const ITEMS = [
     message: "",
   },
   {
+    _id: "j",
+
     name: "Garlic Bread",
     type: ITEM_TYPE.food,
     category: "Starters",
@@ -229,6 +278,8 @@ export const ITEMS = [
     message: "",
   },
   {
+    _id: "k",
+
     name: "Cheese Garlic Bread",
     type: ITEM_TYPE.food,
     category: "Starters",
@@ -241,6 +292,8 @@ export const ITEMS = [
     message: "",
   },
   {
+    _id: "l",
+
     name: "Prawn Cooktail",
     type: ITEM_TYPE.food,
     category: "Starters",
@@ -253,6 +306,8 @@ export const ITEMS = [
     message: "",
   },
   {
+    _id: "m",
+
     name: "Steak Diana",
     type: ITEM_TYPE.food,
     category: "Steaks",
@@ -266,14 +321,22 @@ export const ITEMS = [
         defaultValue: "Medium",
         value: "Medium",
         component: MOD_COMPONENT.select,
-        options: ["Rare", "Medium-rare", "Medium", "Medium-well", "Well-done"],
-        type: MODE_TYPE.non,
+        options: [
+          { value: "Rare", type: MOD_TYPE.non },
+          { value: "Medium-rare", type: MOD_TYPE.non },
+          { value: "Medium", type: MOD_TYPE.non },
+          { value: "Medium-well", type: MOD_TYPE.non },
+          { value: "Well-done", type: MOD_TYPE.non },
+        ],
+        type: MOD_TYPE.non,
         required: true,
       },
     ],
     message: "",
   },
   {
+    _id: "n",
+
     name: "Pepper Diana",
     type: ITEM_TYPE.food,
     category: "Steaks",
@@ -287,8 +350,14 @@ export const ITEMS = [
         defaultValue: "Medium",
         value: "Medium",
         component: MOD_COMPONENT.select,
-        options: ["Rare", "Medium-rare", "Medium", "Medium-well", "Well-done"],
-        type: MODE_TYPE.non,
+        options: [
+          { value: "Rare", type: MOD_TYPE.non },
+          { value: "Medium-rare", type: MOD_TYPE.non },
+          { value: "Medium", type: MOD_TYPE.non },
+          { value: "Medium-well", type: MOD_TYPE.non },
+          { value: "Well-done", type: MOD_TYPE.non },
+        ],
+        type: MOD_TYPE.non,
         required: true,
       },
     ],
