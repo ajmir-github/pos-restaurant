@@ -3,7 +3,13 @@ import HomePage from "./pages/homePage";
 import TabelsPage from "./pages/tablesPage";
 import TablePage from "./pages/tablePage";
 import { useEffect, useState } from "react";
-import { orderRef, tablesRef, trackAuth, trackChanges } from "./firebase";
+import {
+  getItems,
+  orderRef,
+  tablesRef,
+  trackAuth,
+  trackChanges,
+} from "./firebase";
 import { useDispatch } from "react-redux";
 import {
   AuthActions,
@@ -57,12 +63,9 @@ function App() {
     });
 
     // get items
-
-    useEffect(() => {
-      getItems().then((items) => {
-        dispatch({ type: itemsActions.feed, payload: items });
-      });
-    }, []);
+    getItems().then((items) =>
+      dispatch({ type: itemsActions.feed, payload: items })
+    );
 
     return () => {
       unsubAuth();

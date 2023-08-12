@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { ICON_CHECK, ICON_EDIT, ICON_X_MARK } from "../utils/icons";
 import { getCurrentUser, updateUser } from "../firebase";
 import { AuthActions } from "../state";
-import { classes } from "../utils";
+import { ITEM_COLOR, ITEM_TYPE, ITEM_TYPES, classes } from "../utils";
 
 const ChangeUserDisplayName = () => {
   const [saved, setSaved] = useState(false);
@@ -71,16 +71,89 @@ const ChangeUserDisplayName = () => {
   );
 };
 
+function AddItems() {
+  return (
+    <form className="grid gap-4">
+      <div className="form-control w-full">
+        <label className="label">
+          <span className="label-text">Name</span>
+        </label>
+
+        <input
+          type="text"
+          className="input input-bordered w-full "
+          name="name"
+        />
+      </div>
+
+      <div className="form-control w-full ">
+        <label className="label">
+          <span className="label-text">Type</span>
+        </label>
+
+        <select
+          className="select select-bordered w-full "
+          defaultValue={ITEM_TYPE.food}
+          name="type"
+        >
+          {ITEM_TYPES.map((type, index) => (
+            <option key={index} value={type}>
+              {type}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div className="form-control w-full ">
+        <label className="label">
+          <span className="label-text">Price</span>
+        </label>
+
+        <input
+          type="number"
+          className="input input-bordered w-full "
+          name="price"
+        />
+      </div>
+
+      <div className="form-control w-full ">
+        <label className="label">
+          <span className="label-text">Color</span>
+        </label>
+
+        <select
+          className="select select-bordered w-full "
+          defaultValue={ITEM_COLOR.primary}
+          name="color"
+        >
+          {Object.entries(ITEM_COLOR).map(([key, value], index) => (
+            <option value={value} key={index}>
+              {key}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className="join w-full">
+        <button className="join-item btn btn-error grow" type="submit">
+          Reset
+        </button>
+        <button className="join-item btn btn-primary grow" type="submit">
+          Create
+        </button>
+      </div>
+    </form>
+  );
+}
+
 export default function AdminPage() {
   const user = useSelector((state) => state.auth.user);
 
   return (
     <Layout>
       <TopPanel>{user.displayName || user.email}</TopPanel>
-      <div>
-        <div>
-          <ChangeUserDisplayName />
-        </div>
+      <div className="flex flex-col gap-4">
+        <ChangeUserDisplayName />
+        <AddItems />
       </div>
     </Layout>
   );

@@ -48,6 +48,17 @@ export function getListOfTables(length = 20, withId = false) {
     .map((a, index) => createTable({ tableNumber: index + 1 }));
 }
 
+export const ITEM_COLOR = {
+  primary: "btn-primary",
+  secondary: "btn-secondary",
+  success: "btn-success",
+  error: "btn-error",
+  warning: "btn-warning",
+  accent: "btn-accent",
+  ghost: "btn-ghost",
+  neutral: "btn-neutral",
+};
+
 // -------------- ENUMS
 export const PAYMENT_METHODS = {
   card: "Card",
