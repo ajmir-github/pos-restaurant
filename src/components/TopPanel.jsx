@@ -10,7 +10,7 @@ export default function TopPanel({ replaceButtonWith, backHref, children }) {
           Back
         </Link>
       )}
-      <span className="flex gap-2 items-center">{children}</span>
+      <span className="flex gap-2 items-center font-bold">{children}</span>
     </div>
   );
 }
