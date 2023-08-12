@@ -1,10 +1,12 @@
-import { classes, ITEMS, ITEM_CATEGORIES } from "../utils";
+import { classes, ITEM_CATEGORIES } from "../utils";
 import { useState } from "react";
 import { ICON_ARROW_LEFT, ICON_X_MARK } from "../utils/icons";
+import { useSelector } from "react-redux";
 
 export default function Feed({ addItemToCart }) {
   const [category, setCategory] = useState(null);
   const [search, setSearch] = useState("");
+  const items = useSelector((state) => state.items);
 
   const searchMode = !!search;
   const filterFunc = (item) => {
@@ -44,7 +46,7 @@ export default function Feed({ addItemToCart }) {
           </button>
         )}
         {category || searchMode
-          ? ITEMS.filter(filterFunc).map((item, index) => (
+          ? items.filter(filterFunc).map((item, index) => (
               <button
                 onClick={() => addItemToCart(item)}
                 className={classes("btn", item.color)}

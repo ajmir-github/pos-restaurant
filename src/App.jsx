@@ -4,10 +4,11 @@ import TabelsPage from "./pages/tablesPage";
 import TablePage from "./pages/tablePage";
 import { useEffect, useState } from "react";
 import { orderRef, tablesRef, trackAuth, trackChanges } from "./firebase";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import {
   AuthActions,
   barActions,
+  itemsActions,
   kitchenActions,
   tablesActions,
 } from "./state";
@@ -54,6 +55,14 @@ function App() {
         return dispatch({ type: barActions.feed, payload: order });
       }
     });
+
+    // get items
+
+    useEffect(() => {
+      getItems().then((items) => {
+        dispatch({ type: itemsActions.feed, payload: items });
+      });
+    }, []);
 
     return () => {
       unsubAuth();
