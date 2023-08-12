@@ -25,6 +25,7 @@ function App() {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
   useEffect(() => {
+    setLoading(true);
     const unsubAuth = trackAuth(
       ({ signed, user }) => {
         dispatch(

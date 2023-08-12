@@ -5,7 +5,7 @@ import {
   getListOfTables,
 } from "../utils";
 
-export const initialTables = getListOfTables(40, true);
+export const initialTables = getListOfTables(32, true);
 
 export const tablesActions = {
   openTable: "OPEN_TABLE",
