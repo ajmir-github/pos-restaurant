@@ -5,7 +5,7 @@ export default function TopPanel({ replaceButtonWith, backHref, children }) {
   return (
     <div className="flex items-center justify-between gap-4">
       {replaceButtonWith || (
-        <Link className="btn btn-info" to={backHref}>
+        <Link className="btn btn-info" to={backHref || "/"}>
           {ICON_ARROW_LEFT}
           Back
         </Link>

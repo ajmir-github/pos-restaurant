@@ -2,8 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Layout from "../components/Layout";
 import { useDispatch, useSelector } from "react-redux";
 import { themeActions } from "../state";
-import { useEffect } from "react";
-import { getCurrentUser, signOut } from "../firebase";
+import { signOut } from "../firebase";
 import TopPanel from "../components/TopPanel";
 import { EURO_SYMBOL } from "../utils";
 
@@ -55,35 +54,33 @@ export default function HomePage() {
     <Layout>
       <TopPanel
         replaceButtonWith={
-          <div className="w-full flex">
-            <div className="join">
-              <button
-                className="join-item btn btn-primary"
-                onClick={() => dispatch({ type: themeActions.turnDarkTheme })}
-              >
-                Dark
-              </button>
-              <button
-                className="join-item btn btn-secondary"
-                onClick={() => dispatch({ type: themeActions.turnLightTheme })}
-              >
-                Light
-              </button>
-              <select
-                className="join-item select select-bordered select-primary"
-                value={theme}
-                onChange={(e) =>
-                  dispatch({
-                    type: themeActions.chooseTheme,
-                    payload: e.target.value,
-                  })
-                }
-              >
-                {THEMES.map((theme) => (
-                  <option key={theme}>{theme}</option>
-                ))}
-              </select>
-            </div>
+          <div className="join">
+            <button
+              className="join-item btn btn-primary"
+              onClick={() => dispatch({ type: themeActions.turnDarkTheme })}
+            >
+              Dark
+            </button>
+            <button
+              className="join-item btn btn-secondary"
+              onClick={() => dispatch({ type: themeActions.turnLightTheme })}
+            >
+              Light
+            </button>
+            <select
+              className="join-item select select-bordered select-primary"
+              value={theme}
+              onChange={(e) =>
+                dispatch({
+                  type: themeActions.chooseTheme,
+                  payload: e.target.value,
+                })
+              }
+            >
+              {THEMES.map((theme) => (
+                <option key={theme}>{theme}</option>
+              ))}
+            </select>
           </div>
         }
       >

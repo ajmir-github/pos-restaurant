@@ -18,10 +18,11 @@ import LoginPage from "./pages/loginPage";
 import AdminPage from "./pages/adminPage";
 import PageLoading from "./components/PageLoading";
 import { ITEM_TYPE } from "./utils";
+import ProtectedRoute from "./components/ProtectedRoute";
+import UnprotectedRoute from "./components/UnprotectedRoute";
 
 function App() {
   const dispatch = useDispatch();
-  const auth = useSelector((state) => state.auth);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     const unsubAuth = trackAuth(
@@ -59,12 +60,6 @@ function App() {
       unsubOrders();
     };
   }, []);
-
-  const ProtectedRoute = ({ children }) =>
-    !auth.signed ? <Navigate to="/login" replace /> : children;
-
-  const UnprotectedRoute = ({ children }) =>
-    auth.signed ? <Navigate to="/" replace /> : children;
 
   return loading ? (
     <PageLoading />

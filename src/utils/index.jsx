@@ -185,7 +185,6 @@ export const ITEMS = [
 
     name: "Cola",
     type: ITEM_TYPE.drink,
-
     category: "Soft Drinks",
     color: "btn-secondary",
     price: 2.5,
@@ -336,7 +335,6 @@ export const ITEMS = [
   },
   {
     _id: "n",
-
     name: "Pepper Diana",
     type: ITEM_TYPE.food,
     category: "Steaks",
@@ -367,41 +365,23 @@ export const ITEMS = [
 
 export const ITEM_GROUPS = [
   {
-    _id: "CART_GROUP_1",
+    _id: "CART_Starters",
     name: "Starters",
     filterFunc: (item) => item.type === ITEM_TYPE.food && item.starter,
   },
   {
-    _id: "CART_GROUP_2",
+    _id: "CART_Mains",
     name: "Mains",
     filterFunc: (item) => item.type === ITEM_TYPE.food && !item.starter,
   },
   {
-    _id: "CART_GROUP_3",
+    _id: "CART_Desserts",
     name: "Desserts",
     filterFunc: (item) => item.type === ITEM_TYPE.dessert,
   },
   {
-    _id: "CART_GROUP_4",
+    _id: "CART_Drinks",
     name: "Drinks",
     filterFunc: (item) => item.type === ITEM_TYPE.drink,
   },
 ];
-
-export class CachedArray {
-  constructor(key) {
-    this.key = key;
-    if (localStorage.getItem(this.key) === null) this.set([]);
-  }
-  get() {
-    return JSON.parse(localStorage.getItem(this.key));
-  }
-  set(value) {
-    const newData = JSON.stringify(value);
-    localStorage.setItem(this.key, newData);
-  }
-  clear() {
-    localStorage.removeItem(this.key);
-    this.set([]);
-  }
-}

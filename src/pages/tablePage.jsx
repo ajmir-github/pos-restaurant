@@ -60,6 +60,7 @@ export default function TablePage() {
               <EditItem
                 item={selectedItem}
                 cancelEdit={cancelEdit}
+                addItemToCart={addItemToCart}
                 editItemFromCart={editItemFromCart}
                 removeItemFromCart={removeItemFromCart}
               />
