@@ -76,9 +76,9 @@ export const EURO_SYMBOL = <>&#8364;</>;
 export const ITEM_TYPE = {
   food: "Food",
   drink: "Drink",
-  dessert: "dessert",
+  dessert: "Dessert",
 };
-export const ITEM_TYPES = ["Food", "Drink", "dessert"];
+export const ITEM_TYPES = ["Food", "Drink", "Dessert"];
 
 export const MOD_COMPONENT = {
   checkbox: "checkbox",

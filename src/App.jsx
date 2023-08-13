@@ -4,6 +4,7 @@ import TabelsPage from "./pages/tablesPage";
 import TablePage from "./pages/tablePage";
 import { useEffect, useState } from "react";
 import {
+  getCategories,
   getItems,
   orderRef,
   tablesRef,
@@ -14,6 +15,7 @@ import { useDispatch } from "react-redux";
 import {
   AuthActions,
   barActions,
+  categoriesActions,
   itemsActions,
   kitchenActions,
   tablesActions,
@@ -65,6 +67,10 @@ function App() {
     // get items
     getItems().then((items) =>
       dispatch({ type: itemsActions.feed, payload: items })
+    );
+    // get items
+    getCategories().then((items) =>
+      dispatch({ type: categoriesActions.feed, payload: items })
     );
 
     return () => {

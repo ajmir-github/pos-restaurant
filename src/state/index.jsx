@@ -7,6 +7,7 @@ import { AuthActions, authReducer } from "./authReducer";
 import { barActions, barReducer } from "./barReducer";
 import { kitchenActions, kitchenReducer } from "./kitchenReducer";
 import { itemsActions, itemsReducer } from "./itemReducer";
+import { categoriesActions, categoriesReducer } from "./categoryReducer";
 
 // Export Actions and meddlewares
 export {
@@ -17,6 +18,7 @@ export {
   barActions,
   kitchenActions,
   itemsActions,
+  categoriesActions,
 };
 
 // Reducers
@@ -27,6 +29,7 @@ const reducers = {
   bar: barReducer,
   kitchen: kitchenReducer,
   items: itemsReducer,
+  categories: categoriesReducer,
 };
 
 // Store

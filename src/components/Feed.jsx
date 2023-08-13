@@ -1,4 +1,4 @@
-import { classes, ITEM_CATEGORIES } from "../utils";
+import { classes } from "../utils";
 import { useState } from "react";
 import { ICON_ARROW_LEFT, ICON_X_MARK } from "../utils/icons";
 import { useSelector } from "react-redux";
@@ -7,6 +7,7 @@ export default function Feed({ addItemToCart }) {
   const [category, setCategory] = useState(null);
   const [search, setSearch] = useState("");
   const items = useSelector((state) => state.items);
+  const categories = useSelector((state) => state.categories);
 
   const searchMode = !!search;
   const filterFunc = (item) => {
@@ -18,7 +19,7 @@ export default function Feed({ addItemToCart }) {
   };
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 grow">
       <input
         type="text"
         placeholder="Search Here"
@@ -55,7 +56,7 @@ export default function Feed({ addItemToCart }) {
                 {item.name}
               </button>
             ))
-          : ITEM_CATEGORIES.map((category, index) => (
+          : categories.map((category, index) => (
               <button
                 onClick={() => setCategory(category.name)}
                 className={classes("btn", category.color)}

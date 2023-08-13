@@ -18,30 +18,38 @@ import {
   getDoc,
   getDocs,
 } from "firebase/firestore";
-import { useState } from "react";
-import { useEffect } from "react";
 
 const tableCollectionName = "Tables";
 const orderCollectionName = "Orders";
 const userCollectionName = "Users";
 const itemCollectionName = "Items";
+const categoryCollectionName = "Categories";
 export const tablesRef = collection(database, tableCollectionName);
 export const orderRef = collection(database, orderCollectionName);
 export const userRef = collection(database, userCollectionName);
 export const itemRef = collection(database, itemCollectionName);
+export const categoryRef = collection(database, categoryCollectionName);
 
 export const setTable = async (table) => {
   const tableId = table.tableNumber.toString();
   await setDoc(doc(database, tableCollectionName, tableId), table);
   console.log("Table is set!");
 };
+export const setCategory = async (category) => {
+  await setDoc(doc(database, categoryCollectionName, category._id), category);
+  console.log("Category is set!");
+};
 export const setItem = async (item) => {
-  await setDoc(doc(database, item, item._id), item);
+  await setDoc(doc(database, itemCollectionName, item._id), item);
   console.log("Items is set!");
 };
 
 export const getItems = async () => {
   const snap = await getDocs(itemRef);
+  return snap.docs.map(normalizeFirebaseDoc);
+};
+export const getCategories = async () => {
+  const snap = await getDocs(categoryRef);
   return snap.docs.map(normalizeFirebaseDoc);
 };
 
